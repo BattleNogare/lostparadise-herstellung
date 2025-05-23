@@ -417,7 +417,7 @@
       },
       
       "craft_24": {
-        wert: 0,
+        wert: 6600000,
         dauer: 120,
         itemsRequired: [
           ["craft_scaniat1", 1],
@@ -534,7 +534,7 @@
         dauer: 120,
         itemsRequired: [
           ["stoff", 1],
-          ["aluBarren", 0,4],
+          ["aluBarren", 0.4],
         ]
       },
       
@@ -546,90 +546,70 @@
         ]
       },
       
-      "craft_1": {
+      "kupferFolie": {
         wert: 0,
         dauer: 120,
         itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
+          ["kupferBarren", 0.5],
         ]
       },
-      "craft_1": {
+      "kupferDraht": {
         wert: 0,
         dauer: 120,
         itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
+          ["kupferBarren", 1],
         ]
       },
-      "craft_1": {
+      
+      "kupferPulver": {
         wert: 0,
         dauer: 120,
         itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
+          ["kupferBarren", 2],
         ]
       },
-      "craft_1": {
+      "eisenPlatte": {
         wert: 0,
         dauer: 120,
         itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
+          ["eisenBarren", 1],
         ]
       },
-      "craft_1": {
+      "eisenStange": {
         wert: 0,
         dauer: 120,
         itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
+          ["eisenBarren", 1],
         ]
       },
-
-      "craft_1": {
-        wert: 10000,
-        dauer: 90,
+      
+      "aluPlatte": {
+        wert: 0,
+        dauer: 120,
+        itemsRequired: [
+          ["aluBarren", 1],
+        ]
+      },
+      
+      "stahlPlatte": {
+        wert: 0,
+        dauer: 120,
+        itemsRequired: [
+          ["stahlBarren", 1],
+        ]
+      },
+      
+      "aluBox": {
+        wert: 0,
+        dauer: 120,
+        itemsRequired: [
+          ["aluBarren", 3],
+        ]
+      },
+           
+      "Test": {
+        wert: 1000000000,
+        dauer: 0,
         itemsRequired: [
           ["craft_blanko", 1],
           ["schem_1", 1],
@@ -648,32 +628,50 @@
     };
 
     const anzeigeNamen = {
-      "craft_1": "Auto1",
-      "craft_2": "Auto2",
-      "craft_3": "Auto3",
-      "craft_4": "Auto4",
-      "craft_5": "Auto5",
-      "craft_6": "Auto6",
-      "craft_7": "Auto7",
-      "craft_8": "Auto",
-      "craft_9": "Auto",
-      "craft_10": "Auto",
-      "craft_11": "Auto",
-      "craft_12": "Auto",
-      "craft_13": "Auto",
-      "craft_14": "Auto",
-      "craft_15": "Auto",
-      "craft_16": "Auto",
-      "craft_17": "Auto",
-      "craft_18": "Auto",
-      "craft_19": "Auto",
-      "craft_20": "Auto",
-      "craft_21": "Auto",
-      "craft_22": "Auto",
-      "craft_23": "Auto",
-      "craft_24": "Auto",
-      "craft_25": "Auto",
-      "schem_1": "Schablone",
+      "craft_1": "Corvette C2",
+      "craft_2": "Corvette C2 Stingray",
+      "craft_3": "Tesla X",
+      "craft_4": "Cybertruck_v1",
+      "craft_5": "Cybertruck_v2",
+      "craft_6": "Javelin",
+      "craft_7": "Regalia_v1",
+      "craft_8": "Regalia_v2",
+      "craft_9": "zType_GTAV_v1",
+      "craft_10": "zType_GTAV_v2",
+      "craft_11": "Hotknife_GTAV_v1",
+      "craft_12": "Hotknife_GTAV_v2",
+      "craft_13": "Monobike",
+      "craft_14": "Velociraptor",
+      "craft_15": "Coronet",
+      "craft_16": "Hornet",
+      "craft_17": "Eldorado",
+      "craft_18": "vipersrt10acr_v1",
+      "craft_19": "vipersrt10acr_v2",
+      "craft_20": "Scania_v2",
+      "craft_21": "Scania_v3",
+      "craft_22": "Scania_v4",
+      "craft_23": "Man_Brickade_v2",
+      "craft_24": "Kaufbarer Scania_v1 (6,6 Mio)",
+      "craft_25": "Kaufbarer Man_Brickade_v1 (18,8",
+      "schem_1": "Schablone1",
+      "schem_2": "Schablone2",
+      "schem_3": "Schablone3",
+      "schem_4": "Schablone4",
+      "schem_5": "Schablone5",
+      "schem_6": "Schablone6",
+      "schem_7": "Schablone7",
+      "schem_8": "Schablone8",
+      "schem_9": "Schablone9",
+      "schem_10": "Schablone10",
+      "schem_11": "Schablone11",
+      "schem_12": "Schablone12",
+      "schem_13": "Schablone13",
+      "schem_14": "Schablone14",
+      "schem_15": "Schablone15",
+      "schem_16": "Schablone16",
+      "schem_17": "Schablone17",
+      "schem_18": "Schablone18",
+      "schem_19": "Schablone19",     
       
       "craft_blanko": "Lehrer Bauplan",
       "schem_1": "Bauplan Auto",
