@@ -2,40 +2,20 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crafting-Rechner</title>
+  <title>Crafting-System mit Kosten & Gewinn</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-    select, input, button { margin: 5px 0; padding: 6px; font-size: 16px; }
-    label { font-weight: bold; }
-    #ausgabe { background: white; padding: 10px; border-radius: 5px; }
-    pre { white-space: pre-wrap; }
-    .btn-row { text-align: right; margin-top: 10px; }
+    body { font-family: Arial; margin: 2rem; }
+    select, pre { font-size: 1rem; padding: 0.5rem; width: 90%; max-width: 600px; }
+    pre { background: #f0f0f0; padding: 1rem; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-
-  <h1>🛠️ Crafting-Rechner</h1>
-
-  <label>Anzahl herstellen: 
-    <input type="number" id="anzahl" value="1" min="1" onchange="zeigeErgebnis(document.getElementById('itemSelect').value)">
-  </label>
-
-  <br/>
-
-  <label>Item wählen: 
-    <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
-      <option disabled selected>Bitte Item wählen</option>
-    </select>
-  </label>
+  <h1>Crafting-System</h1>
+  <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
+    <option value="">-- Item auswählen --</option>
+  </select>
 
   <pre id="ausgabe"></pre>
-
-  <div class="btn-row">
-    <button onclick="exportCSV()">📤 Export CSV</button>
-    <input type="file" accept=".csv" onchange="importCSV(event)">
-  </div>
-
 
   <script>
     const rezepte = {
@@ -561,7 +541,7 @@
       
       "stoff": {
         wert: 0,
-        dauer: 1.2,
+        dauer: 1,2,
         itemsRequired: [
           ["cotton", 2],
         ]
@@ -622,7 +602,7 @@
       
       "aluBox": {
         wert: 0,
-        dauer: 1,2,
+        dauer: 1.2,
         itemsRequired: [
           ["aluBarren", 3],
         ]
@@ -654,8 +634,8 @@
         ]
       },
       "stahlBarren": {
-        wert: 0,
-        dauer: 0,
+        wert: 271,
+        dauer: 0.83,
         itemsRequired: [
           ["kohleBraun", 3],
           ["eisenBarren", 3],
@@ -838,120 +818,101 @@
         `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
     }
 
+function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}, aufrufKette = {}) {
+  const daten = rezepte[item];
+  if (!daten || !daten.itemsRequired) return;
 
-  function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}) {
-    const daten = rezepte[item];
-    if (!daten || !daten.itemsRequired) return;
+  if (!zwischenprodukte[item]) {
+    zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
+  }
+  zwischenprodukte[item].menge += menge;
 
-    if (!zwischenprodukte[item]) {
-      zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
-    }
-    zwischenprodukte[item].menge += menge;
+  for (const [subItem, subMenge] of daten.itemsRequired) {
+    const gesamtMenge = subMenge * menge;
 
-    for (const [subItem, subMenge] of daten.itemsRequired) {
-      const gesamtMenge = subMenge * menge;
-      if (rezepte[subItem]) {
-        berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
-      } else {
-        if (!rohstoffe[subItem]) {
-          rohstoffe[subItem] = { menge: 0, verwendetIn: {} };
-        }
-        rohstoffe[subItem].menge += gesamtMenge;
-        rohstoffe[subItem].verwendetIn[item] = (rohstoffe[subItem].verwendetIn[item] || 0) + gesamtMenge;
+    if (rezepte[subItem]) {
+      berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
+    } else {
+      if (!rohstoffe[subItem]) {
+        rohstoffe[subItem] = { menge: 0, verwendetIn: {} };
       }
+      rohstoffe[subItem].menge += gesamtMenge;
+      const inProdukt = anzeigeNamen[item] || item;
+      rohstoffe[subItem].verwendetIn[inProdukt] = (rohstoffe[subItem].verwendetIn[inProdukt] || 0) + gesamtMenge;
+    }
+  }
+}
+
+function zeigeErgebnis(itemKey) {
+  const rohstoffe = {}, zwischenprodukte = {};
+  let gesamtDauer = 0;
+  const daten = rezepte[itemKey];
+  const menge = 1;
+
+  berechneMaterialienUndProzesse(itemKey, menge, rohstoffe, zwischenprodukte);
+
+  // Dauer berechnen
+  function berechneDauer(item, menge) {
+    const data = rezepte[item];
+    if (data?.dauer) gesamtDauer += data.dauer * menge;
+
+    for (const [sub, m] of data?.itemsRequired || []) {
+      if (rezepte[sub]) berechneDauer(sub, m * menge);
+    }
+  }
+  berechneDauer(itemKey, menge);
+
+  // Rohstoffliste
+  let rohstoffAusgabe = "📦 Gesamtliste Rohstoffe:\n";
+  let gesamtKosten = 0;
+  for (const key in rohstoffe) {
+    const eintrag = rohstoffe[key];
+    const name = anzeigeNamen[key] || key;
+    const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
+    const preis = rohstoffPreise[key] || 0;
+    const kosten = preis * eintrag.menge;
+    gesamtKosten += kosten;
+    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} Coins\n`;
+    for (const verb in eintrag.verwendetIn) {
+      rohstoffAusgabe += `    ↳ benutzt in: ${verb} (${eintrag.verwendetIn[verb]})\n`;
     }
   }
 
-  function zeigeErgebnis(itemKey) {
-    const menge = parseInt(document.getElementById("anzahl").value || "1");
-    const rohstoffe = {}, zwischenprodukte = {};
-    let gesamtDauer = 0;
+  // Herstellprozesse
+  let prozessAusgabe = "\n🔧 Herstellprozesse:\n";
+  const anzeigeSortiert = Object.entries(zwischenprodukte)
+    .filter(([k]) => k !== itemKey)
+    .sort((a, b) => b[1].menge - a[1].menge);
 
-    berechneMaterialienUndProzesse(itemKey, menge, rohstoffe, zwischenprodukte);
-
-    function berechneDauer(item, menge) {
-      const data = rezepte[item];
-      if (data?.dauer) gesamtDauer += data.dauer * menge;
-      for (const [sub, m] of data?.itemsRequired || []) {
-        if (rezepte[sub]) berechneDauer(sub, m * menge);
-      }
+  for (const [prod, details] of anzeigeSortiert) {
+    const name = anzeigeNamen[prod] || prod;
+    prozessAusgabe += `- ${details.menge}x ${name}\n`;
+    for (const [roh, m] of details.bestandteile) {
+      const rohName = anzeigeNamen[roh] || roh;
+      prozessAusgabe += `    ⤷ ${m * details.menge}x ${rohName}\n`;
     }
-    berechneDauer(itemKey, menge);
-
-    let out = `📦 Gesamtliste Rohstoffe:\n`;
-    let kosten = 0;
-    for (const key in rohstoffe) {
-      const r = rohstoffe[key];
-      const name = anzeigeNamen[key] || key;
-      const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-      const preis = rohstoffPreise[key] || 0;
-      const gesamt = preis * r.menge;
-      kosten += gesamt;
-      out += `- ${r.menge}x ${name}${ort} = ${gesamt} Coins\n`;
-      for (const verb in r.verwendetIn) {
-        out += `    ↳ benutzt in: ${anzeigeNamen[verb] || verb} (${r.verwendetIn[verb]})\n`;
-      }
-    }
-
-    out += `\n🔧 Herstellprozesse (abzuhaken):\n`;
-    const checkbox = (id) => `<input type="checkbox" id="${id}">`;
-
-    const zpSorted = Object.entries(zwischenprodukte)
-      .filter(([k]) => k !== itemKey)
-      .sort((a, b) => b[1].menge - a[1].menge);
-
-    zpSorted.forEach(([prod, info]) => {
-      const pname = anzeigeNamen[prod] || prod;
-      out += `- ${checkbox("check_" + prod)} ${info.menge}x ${pname}\n`;
-      info.bestandteile.forEach(([roh, m]) => {
-        out += `    ⤷ ${m * info.menge}x ${anzeigeNamen[roh] || roh}\n`;
-      });
-    });
-
-    const haupt = rezepte[itemKey];
-    out += `\n- ${checkbox("check_" + itemKey)} ${menge}x ${anzeigeNamen[itemKey] || itemKey}\n`;
-    haupt.itemsRequired.forEach(([roh, m]) => {
-      out += `    ⤷ ${m * menge}x ${anzeigeNamen[roh] || roh}\n`;
-    });
-
-    const gesamtWert = haupt.wert ? haupt.wert * menge : 0;
-    const gewinn = gesamtWert - kosten;
-
-    out += `\n💰 Materialkosten: ${kosten} Coins`;
-    out += `\n💰 Gesamtwert: ${gesamtWert} Coins`;
-    out += `\n📈 Gewinn: ${gewinn} Coins`;
-    out += `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
-
-    document.getElementById("ausgabe").innerHTML = out;
   }
 
-  function exportCSV() {
-    const text = document.getElementById("ausgabe").textContent;
-    const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "herstellung_export.csv";
-    link.click();
+  const hauptProdukt = anzeigeNamen[itemKey] || itemKey;
+  prozessAusgabe += `\n- ${menge}x ${hauptProdukt}\n`;
+  for (const [roh, m] of daten.itemsRequired) {
+    const name = anzeigeNamen[roh] || roh;
+    prozessAusgabe += `    ⤷ ${m * menge}x ${name}\n`;
   }
 
-  function importCSV(event) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      document.getElementById("ausgabe").textContent = e.target.result;
-    };
-    reader.readAsText(event.target.files[0]);
-  }
+  const gesamtWert = daten.wert || 0;
+  const gewinn = gesamtWert - gesamtKosten;
 
-  window.onload = () => {
-    const select = document.getElementById("itemSelect");
-    for (const key in rezepte) {
-      const option = document.createElement("option");
-      option.value = key;
-      option.textContent = anzeigeNamen[key] || key;
-      select.appendChild(option);
-    }
-  };
-</script>
+  document.getElementById("ausgabe").textContent =
+    rohstoffAusgabe +
+    prozessAusgabe +
+    `\n💰 Materialkosten: ${gesamtKosten} Coins` +
+    `\n💰 Gesamtwert: ${gesamtWert} Coins` +
+    `\n📈 Gewinn: ${gewinn} Coins` +
+    `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Sekunden`;
+}
 
+
+  </script>
 </body>
 </html>
