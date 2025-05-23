@@ -18,34 +18,603 @@
 
   <script>
     const rezepte = {
-      "craft_1": {
-        wert: 10000,
-        dauer: 90,
-        itemsRequired: [
-          ["craft_blanko", 1],
-          ["schem_1", 1],
-          ["craft_karrosserie", 4],
-          ["craft_motor", 2],
-          ["craft_reifen", 4],
-          ["craft_getriebe", 6],
-          ["craft_batterie", 1],
-          ["craft_elektrik", 2],
-          ["stoff", 50],
-          ["schwer_stoff", 25]
-        ]
-      },
-      "craft_elektrik": {
-        wert: 500,
-        dauer: 20,
-        itemsRequired: [
-          ["kupfer", 10],
-          ["isolierung", 5]
-        ]
-      }
+	  class craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_1", 1],
+	  	  ["craft_karrosserie", 4],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 6],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 50],
+	  	  {"schwer_stoff", 25}
+	    };
+	  };
+	  
+	  class craft_2 : craft_1 {
+	  	wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_1", 1],
+	  	  ["schem_2", 1],
+	  	  ["craft_karrosserie", 3],
+	  	  ["craft_motor", 4],
+	  	  ["craft_reifen", 2],
+	  	  ["craft_getriebe", 8],
+	  	  ["craft_batterie", 2],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 25],
+	  	  {"schwer_stoff", 10}
+	    };
+	  };
+	  
+	  class craft_3 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_3", 1],
+	  	  ["craft_karrosserie", 4],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 2],
+	  	  ["craft_batterie", 5],
+	  	  ["craft_elektrik", 2],
+	  	  ["craft_elektronik", 3],
+	  	  ["stoff", 50],
+	  	  {"schwer_stoff", 25}
+	    };
+	  };
+	  
+	  class craft_4 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_4", 1],
+	  	  ["craft_karrosserie", 6],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 2],
+	  	  ["craft_batterie", 10],
+	  	  ["craft_elektrik", 4],
+	  	  ["craft_elektronik", 5],
+	  	  ["stoff", 150],
+	  	  {"schwer_stoff", 55}
+	    };
+	  };
+	  
+	  class craft_5 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_4", 1],
+	  	  ["schem_5", 1],
+	  	  ["craft_karrosserie", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 4],
+	  	  ["craft_batterie", 8],
+	  	  ["craft_elektrik", 6],
+	  	  ["craft_elektronik", 6],
+	  	  ["stoff", 75],
+	  	  {"schwer_stoff", 25}
+	    };
+	  };
+	  
+	  class craft_6 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_6", 1],
+	  	  ["craft_karrosserie", 4],
+	  	  ["craft_motor", 3],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 6],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 4],
+	  	  ["stoff", 75],
+	  	  {"schwer_stoff", 50}
+	    };
+	  };
+	  
+	  class craft_7 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_7", 1],
+	  	  ["craft_karrosserie", 8],
+	  	  ["craft_motor", 6],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 6],
+	  	  ["craft_batterie", 2],
+	  	  ["craft_elektrik", 10],
+	  	  ["craft_elektronik", 8],
+	  	  ["stoff", 75],
+	  	  {"schwer_stoff", 50}
+	    };
+	  };
+	  
+	  class craft_8 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_7", 1],
+	  	  ["schem_8", 1],
+	  	  ["craft_karrosserie", 15],
+	  	  ["craft_motor", 4],
+	  	  ["craft_reifen", 2],
+	  	  ["craft_getriebe", 8],
+	  	  ["craft_batterie", 4],
+	  	  ["craft_elektrik", 15],
+	  	  ["craft_elektronik", 10],
+	  	  ["stoff", 150],
+	  	  {"schwer_stoff", 25}
+	    };
+	  };
+	  
+	  class craft_9 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_9", 1],
+	  	  ["craft_karrosserie", 3],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 4],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 50],
+	  	  {"schwer_stoff", 20}
+	    };
+	  };
+	  
+	  class craft_10 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_9", 1],
+	  	  ["schem_10", 1],
+	  	  ["craft_karrosserie", 3],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 6],
+	  	  ["craft_batterie", 2],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 50],
+	  	  {"schwer_stoff", 20}
+	    };
+	  };
+	  
+	  class craft_11 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_11", 1],
+	  	  ["craft_karrosserie", 2],
+	  	  ["craft_motor", 1],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 2],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 40],
+	  	  {"schwer_stoff", 10}
+	    };
+	  };
+	  
+	  class craft_12 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_11", 1],
+	  	  ["schem_12", 1],
+	  	  ["craft_karrosserie", 2],
+	  	  ["craft_motor", 3],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 4],
+	  	  ["craft_batterie", 2],
+	  	  ["craft_elektrik", 3],
+	  	  ["stoff", 40],
+	  	  {"schwer_stoff", 10}
+	    };
+	  };
+	  
+	  class craft_13 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_13", 1],
+	  	  ["craft_karrosserie", 1],
+	  	  ["craft_motor", 1],
+	  	  ["craft_reifen", 1],
+	  	  ["craft_getriebe", 1],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 1],
+	  	  ["stoff", 10],
+	  	  {"schwer_stoff", 5}
+	    };
+	  };
+	  
+	  class craft_14 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_14", 1],
+	  	  ["craft_karrosserie", 10],
+	  	  ["craft_motor", 5],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 5],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 8],
+	  	  ["craft_elektronik", 6],
+	  	  ["stoff", 80],
+	  	  {"schwer_stoff", 40}
+	    };
+	  };
+	  
+	  class craft_15 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_15", 1],
+	  	  ["craft_karrosserie", 3],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 5],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 3],
+	  	  ["stoff", 75],
+	  	  {"schwer_stoff", 50}
+	    };
+	  };
+	  
+	  class craft_16 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_15", 1],
+	  	  ["schem_16", 1],
+	  	  ["craft_karrosserie", 4],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 6],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 4],
+	  	  ["stoff", 80],
+	  	  {"schwer_stoff", 20}
+	    };
+	  };
+	  
+	  class craft_17 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_17", 1],
+	  	  ["craft_karrosserie", 4],
+	  	  ["craft_motor", 2],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 4],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 2],
+	  	  ["stoff", 40],
+	  	  {"schwer_stoff", 20}
+	    };
+	  };
+	  
+	  class craft_18 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_blanko", 1],
+	  	  ["schem_18", 1],
+	  	  ["craft_karrosserie", 6],
+	  	  ["craft_motor", 4],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 8],
+	  	  ["craft_batterie", 1],
+	  	  ["craft_elektrik", 4],
+	  	  ["stoff", 150],
+	  	  {"schwer_stoff", 50}
+	    };
+	  };
+	  
+	  class craft_19 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_18", 1],
+	  	  ["schem_19", 1],
+	  	  ["craft_karrosserie", 8],
+	  	  ["craft_motor", 6],
+	  	  ["craft_reifen", 4],
+	  	  ["craft_getriebe", 10],
+	  	  ["craft_batterie", 2],
+	  	  ["craft_elektrik", 8],
+	  	  ["craft_elektronik", 2],
+	  	  ["stoff", 150],
+	  	  {"schwer_stoff", 50}
+	    };
+
+	    
+	    
+	    
+	  };
+	  class craft_20 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_24", 1],
+	  	  ["schem_20", 1],
+	  	  ["craft_karrosserie", 20],
+	  	  ["craft_motor", 10],
+	  	  ["craft_reifen", 6],
+	  	  ["craft_getriebe", 20],
+	  	  ["craft_batterie", 4],
+	  	  ["craft_elektrik", 20],
+	  	  ["craft_elektronik", 12],
+	  	  ["stoff", 250],
+	  	  {"schwer_stoff", 50}
+	    };
+
+	    
+	    
+	    
+	  };
+	  class craft_21 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_20", 1],
+	  	  ["schem_21", 1],
+	  	  ["craft_karrosserie", 25],
+	  	  ["craft_motor", 12],
+	  	  ["craft_reifen", 6],
+	  	  ["craft_getriebe", 25],
+	  	  ["craft_batterie", 6],
+	  	  ["craft_elektrik", 25],
+	  	  ["craft_elektronik", 14],
+	  	  ["stoff", 300],
+	  	  {"schwer_stoff", 150}
+	    };
+
+	    
+	    
+	    
+	  };
+	  class craft_22 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_21", 1],
+	  	  ["schem_22", 1],
+	  	  ["craft_karrosserie", 30],
+	  	  ["craft_motor", 15],
+	  	  ["craft_reifen", 6],
+	  	  ["craft_getriebe", 30],
+	  	  ["craft_batterie", 8],
+	  	  ["craft_elektrik", 35],
+	  	  ["craft_elektronik", 18],
+	  	  ["stoff", 400],
+	  	  {"schwer_stoff", 200}
+	    };
+
+	    
+	    
+	    
+	  };
+	  class craft_23 : craft_1 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["craft_25", 1],
+	  	  ["schem_23", 1],
+	  	  ["craft_karrosserie", 50],
+	  	  ["craft_motor", 40],
+	  	  ["craft_reifen", 6],
+	  	  ["craft_getriebe", 55],
+	  	  ["craft_batterie", 16],
+	  	  ["craft_elektrik", 40],
+	  	  ["craft_elektronik", 25],
+	  	  ["stoff", 800],
+	  	  {"schwer_stoff", 600}
+	    };  
+	  };
+	  	  	  	  
+	  	  	  	  
+	  class craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["aluPlatte", 50],
+	  	  ["stahlPlatte", 10],
+	  	  ["eisenStange", 25],
+	  	  ["kupferFolie", 15],
+	  	  {"kupferDraht", 5}
+	    };
+	  };
+	  class craft_motor : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["motoroil", 10],
+	  	  ["aluBox", 3],
+	  	  ["plastic", 35],
+	  	  ["stahlBarren", 40],
+	  	  {"kupferFolie", 20}
+	    };
+	    
+	  };
+	  class craft_reifen : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["gummi", 40],
+	  	  ["stahlBarren", 2],
+	  	  ["aluBarren", 40],
+	  	  {"plastic", 5}
+	    };
+	    
+	  };
+	  class craft_carbon : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["aluPlatte", 20],
+	  	  ["plastic", 10],
+	  	  ["kohleStein", 5],
+	  	  {"kohleBraun", 40}
+	    };
+	    
+	  };
+	  class craft_elektrik : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["eisenStange", 10],
+	  	  ["kupferFolie", 25],
+	  	  ["kupferDraht", 40],
+	  	  ["plastic", 35],
+	  	  ["gummi", 15],
+	  	  {"aluPlatte", 2}
+	    };
+	    
+	  };
+	  class craft_batterie : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["aluBox", 10],
+	  	  ["schwefelacid", 25],
+	  	  ["plastic", 40],
+	  	  ["gummi", 5],
+	  	  {"craft_elektrik", 5}
+	    };
+	    
+	  };
+	  class craft_getriebe : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["stahlBarren", 10],
+	  	  ["stahlPlatte", 25],
+	  	  ["eisenStange", 40],
+	  	  {"getriebeoil", 20}
+	    };
+	    
+	  };
+	  class craft_elektronik : craft_karrosserie {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  ["eisenStange", 15],
+	  	  ["kupferFolie", 40],
+	  	  ["kupferDraht", 60],
+	  	  ["plastic", 50],
+	  	  ["gummi", 20],
+	  	  ["aluPlatte", 4],
+	  	  ["craft_elektrik", 3],
+	  	  {"rubin", 5}
+	    };
+	    
+	  };
+
+
+
+	  class schwer_stoff25 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"stoff",25},
+	  	  {"aluBarren",10}
+	    };
+
+	  };
+
+	  class stoff100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"cotton",200}
+	    };
+
+	  };
+
+	  class kupferFolie25 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"kupferBarren",50}
+	    };
+
+	  };
+
+	  class kupferDraht25 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"kupferBarren",25}
+	    };
+
+	  };
+
+	  class kupferPulver25 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"kupferBarren",50}
+	    };
+
+	  };
+
+
+	  class eisenPlatte100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"eisenBarren",100}
+	    };
+	  };
+	  class eisenStange100 : eisenPlatte100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"eisenBarren",100}
+	    };
+	  };
+	  class aluPlatte100 : eisenPlatte100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"aluBarren",100}
+	    };
+	  };
+	  class stahlPlatte100 : eisenPlatte100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"stahlBarren",100}
+	    };
+	  };
+	  class aluBox100 : eisenPlatte100 {
+	    wert: 0,
+        dauer: 120,
+	    itemsRequired[] = {
+	  	  {"aluBarren",300}
+	    };
+	  };
     };
 
     const anzeigeNamen = {
-      "craft_1": "Auto",
+      "craft_1": "Corvette C2",
       "craft_blanko": "Fahrzeugrahmen",
       "schem_1": "Bauplan Auto",
       "craft_karrosserie": "Karosserie",
@@ -61,9 +630,9 @@
     };
 
     const fundorte = {
-      "stoff": "Schneiderei",
-      "schwer_stoff": "Militärlager",
-      "kupfer": "Mine A",
+      "stoff": "Baumwolle anpflanzen",
+      "schwer_stoff": "Ingeneurbüro -> Einfacher Stoff ",
+      "kupfer": "Ku",
       "isolierung": "Werkstatt B"
     };
 
