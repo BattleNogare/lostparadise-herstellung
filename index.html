@@ -644,30 +644,30 @@
     const anzeigeNamen = {
       "craft_1": "Corvette C2",
       "craft_2": "Corvette C2 Stingray",
-      "craft_3": "Tesla X",
-      "craft_4": "Cybertruck_v1",
-      "craft_5": "Cybertruck_v2",
-      "craft_6": "Javelin",
-      "craft_7": "Regalia_v1",
-      "craft_8": "Regalia_v2",
-      "craft_9": "zType_GTAV_v1",
-      "craft_10": "zType_GTAV_v2",
-      "craft_11": "Hotknife_GTAV_v1",
-      "craft_12": "Hotknife_GTAV_v2",
+      "craft_3": "Tesla Model X",
+      "craft_4": "Cybertruck",
+      "craft_5": "Cyberbeast",
+      "craft_6": "AMC Javelin",
+      "craft_7": "Quartz Regalia",
+      "craft_8": "Quarz Regalia D-Type",
+      "craft_9": "Truffade Z-Type",
+      "craft_10": "Truffade Z-Type-R",
+      "craft_11": "Vapid Hotknife",
+      "craft_12": "Vapid Hotknife RAW",
       "craft_13": "Monobike",
       "craft_14": "Velociraptor",
-      "craft_15": "Coronet",
-      "craft_16": "Hornet",
-      "craft_17": "Eldorado",
-      "craft_18": "vipersrt10acr_v1",
-      "craft_19": "vipersrt10acr_v2",
-      "craft_20": "Scania_v2",
-      "craft_21": "Scania_v3",
-      "craft_22": "Scania_v4",
-      "craft_23": "Man_Brickade_v2",
+      "craft_15": "Dodge Coronet",
+      "craft_16": "Hudson Hornet",
+      "craft_17": "Cadillac Eldorado",
+      "craft_18": "Dodge Viper SRT10",
+      "craft_19": "Dodge Viper SRT10-S",
+      "craft_20": "Scania S-520 ProfiLiner 8x4 ´16",
+      "craft_21": "Scania S-520 HardLiner 8x4 40ft ´16",
+      "craft_22": "Scania S-520 Hardliner 8x4 40ft Ext´16",
+      "craft_23": "MAN TGM HeavyDute ´16",
       "craft_24": "Kaufbarer Scania_v1 (6,6 Mio)",
-      "craft_25": "Kaufbarer Man_Brickade_v1 (18,8",
-      "schem_1": "Schablone1",
+      "craft_25": "Kaufbarer Man_Brickade_v1 (18,8 Mio)",
+      "schem_1": "Corvette C2 Schablone",
       "schem_2": "Schablone2",
       "schem_3": "Schablone3",
       "schem_4": "Schablone4",
@@ -739,6 +739,7 @@
       "gummi": "Chemiewerk",
       "getriebeoil": "Baumarkt",
       "motoroil": "Baumarkt",
+      "craft_blanko": "Baumarkt",
     
     
     };
@@ -900,7 +901,7 @@ function zeigeErgebnis(itemKey) {
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
     prozessAusgabe +
-    `\n💰 Kaubare Materialkosten: ${gesamtKosten} €` +
+    `\n💰 Kaufbare Materialkosten: ${gesamtKosten} €` +
 //    `\n💰 Gesamtwert: ${gesamtWert} €` +
 //   `\n📈 Gewinn: ${gewinn} €` +
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
