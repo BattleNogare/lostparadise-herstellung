@@ -11,9 +11,10 @@
 </head>
 <body>
   <h1>Crafting-System</h1>
-  <select id="itemSelect" onchange="zeigeRezept()">
+  <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
     <option value="">-- Item auswählen --</option>
   </select>
+
   <pre id="ausgabe"></pre>
 
   <script>
@@ -531,7 +532,7 @@
       
       "schwer_stoff": {
         wert: 0,
-        dauer: 120,
+        dauer: 4.8,
         itemsRequired: [
           ["stoff", 1],
           ["aluBarren", 0.4],
@@ -540,7 +541,7 @@
       
       "stoff": {
         wert: 0,
-        dauer: 120,
+        dauer: 1,2,
         itemsRequired: [
           ["cotton", 2],
         ]
@@ -548,14 +549,14 @@
       
       "kupferFolie": {
         wert: 0,
-        dauer: 120,
+        dauer: 4.8,
         itemsRequired: [
           ["kupferBarren", 0.5],
         ]
       },
       "kupferDraht": {
         wert: 0,
-        dauer: 120,
+        dauer: 4.8,
         itemsRequired: [
           ["kupferBarren", 1],
         ]
@@ -563,21 +564,21 @@
       
       "kupferPulver": {
         wert: 0,
-        dauer: 120,
+        dauer: 4.8,
         itemsRequired: [
           ["kupferBarren", 2],
         ]
       },
       "eisenPlatte": {
         wert: 0,
-        dauer: 120,
+        dauer: 1.2,
         itemsRequired: [
           ["eisenBarren", 1],
         ]
       },
       "eisenStange": {
         wert: 0,
-        dauer: 120,
+        dauer: 1.2,
         itemsRequired: [
           ["eisenBarren", 1],
         ]
@@ -585,7 +586,7 @@
       
       "aluPlatte": {
         wert: 0,
-        dauer: 120,
+        dauer: 1.2,
         itemsRequired: [
           ["aluBarren", 1],
         ]
@@ -593,12 +594,60 @@
       
       "stahlPlatte": {
         wert: 0,
-        dauer: 120,
+        dauer: 1.2,
         itemsRequired: [
           ["stahlBarren", 1],
         ]
       },
       
+      "aluBox": {
+        wert: 0,
+        dauer: 1.2,
+        itemsRequired: [
+          ["aluBarren", 3],
+        ]
+      },
+      
+      "aluBarren": {
+        wert: 371,
+        dauer: 0.35,
+        itemsRequired: [
+          ["aluErz", 1],
+          ["schwefelacid", 0.3],
+          ["schlacke", 0.3],
+        ]
+      },
+      
+      "eisenBarren": {
+        wert: 81,
+        dauer: 0.83,
+        itemsRequired: [
+          ["eisenErz", 1],
+        ]
+      },
+      
+      "kupferBarren": {
+        wert: 96,
+        dauer: 0.83,
+        itemsRequired: [
+          ["kupferErz", 1],
+        ]
+      },
+      "stahlBarren": {
+        wert: 271,
+        dauer: 0.83,
+        itemsRequired: [
+          ["kohleBraun", 3],
+          ["eisenBarren", 3],
+        ]
+      },
+      "aluBox": {
+        wert: 0,
+        dauer: 120,
+        itemsRequired: [
+          ["aluBarren", 3],
+        ]
+      },
       "aluBox": {
         wert: 0,
         dauer: 120,
@@ -701,27 +750,42 @@
       "getriebeoil": "Getriebeöl",
       "schwefelacid": "Schwefelsäure",
       "cotton": "Baumwolle",
-      "": "",
-      "": "",
-      "": "",
-      "": "",
+      "schlacke": "Schlacke",
+      "aluErz": "BauxitErz",
+      "eisenErz": "Eisenerz",
+      "kupferErz": "Kupfererz",
+      "kohleBraun": "Braunkohle",
+      "kohleStein": "Steinkohle",
       "": "",
       
       
     };
 
     const fundorte = {
-      "stoff": "Schneiderei",
-      "schwer_stoff": "Militärlager",
-      "kupfer": "Mine A",
-      "isolierung": "Werkstatt B"
+      "kohleBraun": "Kohlemine",
+      "kohleStein": "Kohlemine",
+      "kupferErz": "Kupfermine",
+      "eisenErz": "Eisenmine"
+      "aluErz": "Bauxitmine"
+      "schwefelacid": "Chemiewerk",
+      "aluErz": "Bauxitmine"
+      "plastic": "Chemiewerk"
+      "gummi": "Chemiewerk"
+      "getriebeoil": "Baumarkt",
+      "motoroil": "Baumarkt",
+    
+    
     };
 
     const rohstoffPreise = {
-      "stoff": 10,
-      "schwer_stoff": 50,
-      "kupfer": 20,
-      "isolierung": 15
+      "schwefelacid": 85,
+      "gummi": 220,
+      "plastic": 175,
+      "getriebeoil": 135,
+      "motoroil": 65,
+      "craft_blanko": 1000,
+      "kohleBraun": 37,
+      "kohleStein": 29,
     };
 
     const select = document.getElementById("itemSelect");
