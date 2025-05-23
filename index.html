@@ -1,88 +1,97 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <title>Rezepte</title>
+  <meta charset="UTF-8">
+  <title>Crafting Anzeige</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 1rem;
-      background: #fff;
-    }
-    h1 {
-      font-size: 1.2rem;
-      color: #333;
-    }
-    select, pre {
-      font-size: 1rem;
-      padding: 0.5rem;
-      margin-top: 1rem;
-      width: 90%;
-      max-width: 400px;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      white-space: pre-wrap;
-    }
+    body { font-family: Arial; margin: 2rem; }
+    select, pre { font-size: 1rem; padding: 0.5rem; width: 300px; }
+    pre { background: #f0f0f0; padding: 1rem; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <h1>Herstellungsprozess anzeigen</h1>
-  <label for="itemSelect">Item auswählen:</label><br />
-  <select id="itemSelect" onchange="showProcess()">
-    <option value="">-- auswählen --</option>
+  <h1>Crafting-System</h1>
+  <select id="itemSelect" onchange="zeigeRezept()">
+    <option value="">-- Item auswählen --</option>
   </select>
-  <pre id="output"></pre>
+  <pre id="ausgabe"></pre>
 
   <script>
-    const recipes = {
-      "Holzbett": {
-        "Zutaten": {
-          "Holzbrett": 4,
-          "Nagel": 10
-        }
+    // 1. Interne Crafting-Daten
+    const rezepte = {
+      "craft_1": {
+        itemsRequired: [
+          ["craft_blanko", 1],
+          ["schem_1", 1],
+          ["craft_karrosserie", 4],
+          ["craft_motor", 2],
+          ["craft_reifen", 4],
+          ["craft_getriebe", 6],
+          ["craft_batterie", 1],
+          ["craft_elektrik", 2],
+          ["stoff", 50],
+          ["schwer_stoff", 25]
+        ]
       },
-      "Holzbrett": {
-        "Zutaten": {
-          "Holz": 2
-        }
-      },
-      "Nagel": {
-        "Zutaten": {
-          "Eisen": 1
-        }
-      },
-      "Holz": { "Zutaten": {} },
-      "Eisen": { "Zutaten": {} }
+      "craft_elektrik": {
+        itemsRequired: [
+          ["kupfer", 10],
+          ["isolierung", 5]
+        ]
+      }
+    };
+
+    // 2. Mapping interner Namen → Anzeigenamen
+    const anzeigeNamen = {
+      "craft_1": "Auto",
+      "craft_blanko": "Fahrzeugrahmen",
+      "schem_1": "Bauplan Auto",
+      "craft_karrosserie": "Karosserie",
+      "craft_motor": "Motor",
+      "craft_reifen": "Reifen",
+      "craft_getriebe": "Getriebe",
+      "craft_batterie": "Batterie",
+      "craft_elektrik": "Elektrik",
+      "stoff": "Einfacher Stoff",
+      "schwer_stoff": "Schwerer Stoff",
+      "kupfer": "Kupfer",
+      "isolierung": "Isolierung"
     };
 
     const select = document.getElementById("itemSelect");
-    const output = document.getElementById("output");
+    const ausgabe = document.getElementById("ausgabe");
 
-    for (let item in recipes) {
-      const option = document.createElement("option");
-      option.value = item;
-      option.textContent = item;
-      select.appendChild(option);
+    // 3. Dropdown befüllen
+    for (let key in rezepte) {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = anzeigeNamen[key] || key;
+      select.appendChild(opt);
     }
 
-    function getFullRecipe(item, depth = 0) {
-      if (!recipes[item]) return " ".repeat(depth * 2) + item + " (unbekannt)\n";
-      let result = " ".repeat(depth * 2) + `${item}\n`;
-      const zutaten = recipes[item].Zutaten;
-      for (let zutat in zutaten) {
-        result += " ".repeat(depth * 2 + 2) + `⤷ ${zutaten[zutat]}x ${zutat}\n`;
-        result += getFullRecipe(zutat, depth + 2);
+    // 4. Rekursive Anzeige
+    function zeigeRezept() {
+      const key = select.value;
+      if (!key) return ausgabe.textContent = "";
+
+      ausgabe.textContent = verarbeiteRezept(key);
+    }
+
+    function verarbeiteRezept(item, ebene = 0) {
+      const einzug = " ".repeat(ebene * 2);
+      let ausgabe = `${einzug}${anzeigeNamen[item] || item}\n`;
+
+      const daten = rezepte[item];
+      if (!daten || !daten.itemsRequired) return ausgabe;
+
+      for (const [subItem, menge] of daten.itemsRequired) {
+        ausgabe += `${einzug}  ⤷ ${menge}x ${anzeigeNamen[subItem] || subItem}\n`;
+        if (rezepte[subItem]) {
+          ausgabe += verarbeiteRezept(subItem, ebene + 2);
+        }
       }
-      return result;
-    }
 
-    function showProcess() {
-      const selected = select.value;
-      output.textContent = selected ? getFullRecipe(selected) : "";
+      return ausgabe;
     }
   </script>
 </body>
