@@ -755,12 +755,35 @@ kbank <!DOCTYPE html>
     const select = document.getElementById("itemSelect");
     const ausgabe = document.getElementById("ausgabe");
 
-    for (let key in rezepte) {
-      const opt = document.createElement("option");
-      opt.value = key;
-      opt.textContent = anzeigeNamen[key] || key;
-      select.appendChild(opt);
-    }
+const erlaubteItems = [
+  "craft_1",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_2",
+  "craft_5",
+  "craft_10",
+  "craft_15"
+  // Füge hier weitere craft-Keys hinzu, die angezeigt werden sollen
+];
+
+for (let key of erlaubteItems) {
+  if (rezepte[key]) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = anzeigeNamen[key] || key;
+    select.appendChild(opt);
+  }
+}
 
     function zeigeRezept() {
       const key = select.value;
@@ -875,19 +898,6 @@ function zeigeErgebnis(itemKey) {
 //   `\n📈 Gewinn: ${gewinn} €` +
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
 }
-
-const erlaubteItems = ["craft_1", "craft_2", "craft_3", "craft_10", "craft_15"];
-
-function initDropdown() {
-  for (let key of erlaubteItems) {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = anzeigeNamen[key] || key;
-    select.appendChild(opt);
-  }
-}
-initDropdown();
-
 
 
 select.addEventListener("change", () => {
