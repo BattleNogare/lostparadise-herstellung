@@ -871,8 +871,8 @@ function zeigeErgebnis(itemKey) {
     rohstoffAusgabe +
     prozessAusgabe +
     `\n💰 Materialkosten: ${gesamtKosten} €` +
-    `\n💰 Gesamtwert: ${gesamtWert} €` +
-    `\n📈 Gewinn: ${gewinn} €` +
+//    `\n💰 Gesamtwert: ${gesamtWert} €` +
+//   `\n📈 Gewinn: ${gewinn} €` +
     `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Sekunden`;
 }
 
@@ -888,23 +888,10 @@ function initDropdown() {
 }
 initDropdown();
 
-// Zeige Checkboxen zur Auswahl der Sub-Elemente
-function generiereCheckboxen(itemKey) {
-  const container = document.getElementById("checkboxContainer");
-  container.innerHTML = "";
-  const daten = rezepte[itemKey];
-  if (!daten || !daten.itemsRequired) return;
 
-  daten.itemsRequired.forEach(([item]) => {
-    const label = document.createElement("label");
-    label.innerHTML = `<input type="checkbox" checked value="${item}"> ${anzeigeNamen[item] || item}<br />`;
-    container.appendChild(label);
-  });
-}
 
 select.addEventListener("change", () => {
   zeigeErgebnis(select.value);
-  generiereCheckboxen(select.value);
 });
 
 
