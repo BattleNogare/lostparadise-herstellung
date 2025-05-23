@@ -754,39 +754,52 @@
         `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
     }
 
-    function verarbeiteRezept(item, ebene = 0, rohstoffSammlung = {}, dauerCallback) {
-      const einzug = " ".repeat(ebene * 2);
-      let out = `${einzug}${anzeigeNamen[item] || item}\n`;
+function verarbeiteRezept(item, ebene = 0, rohstoffSammlung = {}, dauerCallback, verbrauchIn) {
+  const einzug = " ".repeat(ebene * 2);
+  let out = `${einzug}${anzeigeNamen[item] || item}\n`;
 
-      const daten = rezepte[item];
-      if (!daten || !daten.itemsRequired) return out;
-      if (daten.dauer) dauerCallback(daten.dauer);
+  const daten = rezepte[item];
+  if (!daten || !daten.itemsRequired) return out;
+  if (daten.dauer) dauerCallback(daten.dauer);
 
-      for (const [subItem, menge] of daten.itemsRequired) {
-        out += `${einzug}  ⤷ ${menge}x ${anzeigeNamen[subItem] || subItem}\n`;
-        if (rezepte[subItem]) {
-          out += verarbeiteRezept(subItem, ebene + 2, rohstoffSammlung, dauerCallback);
-        } else {
-          rohstoffSammlung[subItem] = (rohstoffSammlung[subItem] || 0) + menge;
-        }
+  for (const [subItem, menge] of daten.itemsRequired) {
+    out += `${einzug}  ⤷ ${menge}x ${anzeigeNamen[subItem] || subItem}\n`;
+
+    if (rezepte[subItem]) {
+      out += verarbeiteRezept(subItem, ebene + 2, rohstoffSammlung, dauerCallback, anzeigeNamen[item] || item);
+    } else {
+      if (!rohstoffSammlung[subItem]) {
+        rohstoffSammlung[subItem] = { menge: 0, verwendetIn: {} };
       }
-
-      return out;
-    }
-
-    function generiereMaterialListe(rohs) {
-      let zeilen = [], kosten = 0;
-      for (let key in rohs) {
-        const menge = rohs[key];
-        const name = anzeigeNamen[key] || key;
-        const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-        const preis = rohstoffPreise[key] || 0;
-        const gesamt = preis * menge;
-        kosten += gesamt;
-        zeilen.push(`- ${menge}x ${name}${ort} = ${gesamt} Coins`);
+      rohstoffSammlung[subItem].menge += menge;
+      if (verbrauchIn) {
+        rohstoffSammlung[subItem].verwendetIn[verbrauchIn] = (rohstoffSammlung[subItem].verwendetIn[verbrauchIn] || 0) + menge;
       }
-      return { liste: zeilen.join("\n"), kosten };
     }
+  }
+
+  return out;
+}
+
+function generiereMaterialListe(rohs) {
+  let zeilen = [], kosten = 0;
+  for (let key in rohs) {
+    const name = anzeigeNamen[key] || key;
+    const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
+    const preis = rohstoffPreise[key] || 0;
+    const menge = rohs[key].menge;
+    const gesamt = preis * menge;
+    kosten += gesamt;
+
+    zeilen.push(`- ${menge}x ${name}${ort} = ${gesamt} Coins`);
+
+    const verwendung = rohs[key].verwendetIn;
+    for (let inProdukt in verwendung) {
+      zeilen.push(`    ↳ benutzt in: ${inProdukt} (${verwendung[inProdukt]})`);
+    }
+  }
+  return { liste: zeilen.join("\n"), kosten };
+}
   </script>
 </body>
 </html>
