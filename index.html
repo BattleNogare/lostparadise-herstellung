@@ -11,9 +11,10 @@
 </head>
 <body>
   <h1>Crafting-System</h1>
-  <select id="itemSelect" onchange="zeigeRezept()">
+  <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
     <option value="">-- Item auswählen --</option>
   </select>
+
   <pre id="ausgabe"></pre>
 
   <script>
