@@ -812,9 +812,9 @@
 
       ausgabe.textContent = herstellung +
         "\n📦 Gesamtliste Rohstoffe:\n" + liste +
-        `\n💰 Materialkosten: ${kosten} Coins` +
-        `\n💰 Gesamtwert: ${gesamtWert} Coins` +
-        `\n📈 Gewinn: ${gewinn} Coins` +
+        `\n💰 Materialkosten: ${kosten} €` +
+        `\n💰 Gesamtwert: ${gesamtWert} €` +
+        `\n📈 Gewinn: ${gewinn} €` +
         `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
     }
 
@@ -872,7 +872,7 @@ function zeigeErgebnis(itemKey) {
     const preis = rohstoffPreise[key] || 0;
     const kosten = preis * eintrag.menge;
     gesamtKosten += kosten;
-    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} Coins\n`;
+    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} €\n`;
     for (const verb in eintrag.verwendetIn) {
       rohstoffAusgabe += `    ↳ benutzt in: ${verb} (${eintrag.verwendetIn[verb]})\n`;
     }
@@ -906,9 +906,9 @@ function zeigeErgebnis(itemKey) {
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
     prozessAusgabe +
-    `\n💰 Materialkosten: ${gesamtKosten} Coins` +
-    `\n💰 Gesamtwert: ${gesamtWert} Coins` +
-    `\n📈 Gewinn: ${gewinn} Coins` +
+    `\n💰 Materialkosten: ${gesamtKosten} €` +
+    `\n💰 Gesamtwert: ${gesamtWert} €` +
+    `\n📈 Gewinn: ${gewinn} €` +
     `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Sekunden`;
 }
 
