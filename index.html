@@ -754,52 +754,101 @@
         `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
     }
 
-function verarbeiteRezept(item, ebene = 0, rohstoffSammlung = {}, dauerCallback, verbrauchIn) {
-  const einzug = " ".repeat(ebene * 2);
-  let out = `${einzug}${anzeigeNamen[item] || item}\n`;
-
+function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}, aufrufKette = {}) {
   const daten = rezepte[item];
-  if (!daten || !daten.itemsRequired) return out;
-  if (daten.dauer) dauerCallback(daten.dauer);
+  if (!daten || !daten.itemsRequired) return;
 
-  for (const [subItem, menge] of daten.itemsRequired) {
-    out += `${einzug}  ⤷ ${menge}x ${anzeigeNamen[subItem] || subItem}\n`;
+  if (!zwischenprodukte[item]) {
+    zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
+  }
+  zwischenprodukte[item].menge += menge;
+
+  for (const [subItem, subMenge] of daten.itemsRequired) {
+    const gesamtMenge = subMenge * menge;
 
     if (rezepte[subItem]) {
-      out += verarbeiteRezept(subItem, ebene + 2, rohstoffSammlung, dauerCallback, anzeigeNamen[item] || item);
+      berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
     } else {
-      if (!rohstoffSammlung[subItem]) {
-        rohstoffSammlung[subItem] = { menge: 0, verwendetIn: {} };
+      if (!rohstoffe[subItem]) {
+        rohstoffe[subItem] = { menge: 0, verwendetIn: {} };
       }
-      rohstoffSammlung[subItem].menge += menge;
-      if (verbrauchIn) {
-        rohstoffSammlung[subItem].verwendetIn[verbrauchIn] = (rohstoffSammlung[subItem].verwendetIn[verbrauchIn] || 0) + menge;
-      }
+      rohstoffe[subItem].menge += gesamtMenge;
+      const inProdukt = anzeigeNamen[item] || item;
+      rohstoffe[subItem].verwendetIn[inProdukt] = (rohstoffe[subItem].verwendetIn[inProdukt] || 0) + gesamtMenge;
     }
   }
-
-  return out;
 }
 
-function generiereMaterialListe(rohs) {
-  let zeilen = [], kosten = 0;
-  for (let key in rohs) {
+function zeigeErgebnis(itemKey) {
+  const rohstoffe = {}, zwischenprodukte = {};
+  let gesamtDauer = 0;
+  const daten = rezepte[itemKey];
+  const menge = 1;
+
+  berechneMaterialienUndProzesse(itemKey, menge, rohstoffe, zwischenprodukte);
+
+  // Dauer berechnen
+  function berechneDauer(item, menge) {
+    const data = rezepte[item];
+    if (data?.dauer) gesamtDauer += data.dauer * menge;
+
+    for (const [sub, m] of data?.itemsRequired || []) {
+      if (rezepte[sub]) berechneDauer(sub, m * menge);
+    }
+  }
+  berechneDauer(itemKey, menge);
+
+  // Rohstoffliste
+  let rohstoffAusgabe = "📦 Gesamtliste Rohstoffe:\n";
+  let gesamtKosten = 0;
+  for (const key in rohstoffe) {
+    const eintrag = rohstoffe[key];
     const name = anzeigeNamen[key] || key;
     const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
     const preis = rohstoffPreise[key] || 0;
-    const menge = rohs[key].menge;
-    const gesamt = preis * menge;
-    kosten += gesamt;
-
-    zeilen.push(`- ${menge}x ${name}${ort} = ${gesamt} Coins`);
-
-    const verwendung = rohs[key].verwendetIn;
-    for (let inProdukt in verwendung) {
-      zeilen.push(`    ↳ benutzt in: ${inProdukt} (${verwendung[inProdukt]})`);
+    const kosten = preis * eintrag.menge;
+    gesamtKosten += kosten;
+    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} Coins\n`;
+    for (const verb in eintrag.verwendetIn) {
+      rohstoffAusgabe += `    ↳ benutzt in: ${verb} (${eintrag.verwendetIn[verb]})\n`;
     }
   }
-  return { liste: zeilen.join("\n"), kosten };
+
+  // Herstellprozesse
+  let prozessAusgabe = "\n🔧 Herstellprozesse:\n";
+  const anzeigeSortiert = Object.entries(zwischenprodukte)
+    .filter(([k]) => k !== itemKey)
+    .sort((a, b) => b[1].menge - a[1].menge);
+
+  for (const [prod, details] of anzeigeSortiert) {
+    const name = anzeigeNamen[prod] || prod;
+    prozessAusgabe += `- ${details.menge}x ${name}\n`;
+    for (const [roh, m] of details.bestandteile) {
+      const rohName = anzeigeNamen[roh] || roh;
+      prozessAusgabe += `    ⤷ ${m * details.menge}x ${rohName}\n`;
+    }
+  }
+
+  const hauptProdukt = anzeigeNamen[itemKey] || itemKey;
+  prozessAusgabe += `\n- ${menge}x ${hauptProdukt}\n`;
+  for (const [roh, m] of daten.itemsRequired) {
+    const name = anzeigeNamen[roh] || roh;
+    prozessAusgabe += `    ⤷ ${m * menge}x ${name}\n`;
+  }
+
+  const gesamtWert = daten.wert || 0;
+  const gewinn = gesamtWert - gesamtKosten;
+
+  document.getElementById("ausgabe").textContent =
+    rohstoffAusgabe +
+    prozessAusgabe +
+    `\n💰 Materialkosten: ${gesamtKosten} Coins` +
+    `\n💰 Gesamtwert: ${gesamtWert} Coins` +
+    `\n📈 Gewinn: ${gewinn} Coins` +
+    `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
 }
+
+
   </script>
 </body>
 </html>
