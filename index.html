@@ -905,15 +905,15 @@ function zeigeErgebnis(itemKey) {
 
   const gesamtWert = daten.wert || 0;
   const gewinn = gesamtWert - gesamtKosten;
-
+  const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
+  const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
+  
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
     prozessAusgabe +
     `\n💰 Kaufbare Materialkosten: ${gesamtKosten} €` +
 //    `\n💰 Gesamtwert: ${gesamtWert} €` +
 //   `\n📈 Gewinn: ${gewinn} €` +
-    const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
-    const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
     //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
 }
