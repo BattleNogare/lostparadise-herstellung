@@ -912,7 +912,10 @@ function zeigeErgebnis(itemKey) {
     `\n💰 Kaufbare Materialkosten: ${gesamtKosten} €` +
 //    `\n💰 Gesamtwert: ${gesamtWert} €` +
 //   `\n📈 Gewinn: ${gewinn} €` +
-    `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
+    const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
+    const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
+    //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
+    `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
 }
 
 
