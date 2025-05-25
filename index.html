@@ -916,7 +916,7 @@ function zeigeErgebnis(itemKey) {
   const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
   const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
   const arbeitszeitkosten = (dauerInStunden * 300000).toFixed(2);
-  const gesamtkostenfinal = (gesamtKosten + arbeitszeitkosten).toFixed(2);
+  const gesamtkostenfinal = (gesamtKosten + arbeitszeitkosten) * 1.3;
   
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
