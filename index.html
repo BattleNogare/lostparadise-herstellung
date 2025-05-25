@@ -541,7 +541,7 @@
       },
       
       "stoff": {
-        wert: 0,
+        wert: 148,
         dauer: 1.2,
         itemsRequired: [
           ["cotton", 2],
@@ -549,14 +549,14 @@
       },
       
       "kupferFolie": {
-        wert: 0,
+        wert: 53,
         dauer: 4.8,
         itemsRequired: [
           ["kupferBarren", 0.5],
         ]
       },
       "kupferDraht": {
-        wert: 0,
+        wert: 106,
         dauer: 4.8,
         itemsRequired: [
           ["kupferBarren", 1],
@@ -571,14 +571,14 @@
         ]
       },
       "eisenPlatte": {
-        wert: 0,
+        wert: 90,
         dauer: 1.2,
         itemsRequired: [
           ["eisenBarren", 1],
         ]
       },
       "eisenStange": {
-        wert: 0,
+        wert: 90,
         dauer: 1.2,
         itemsRequired: [
           ["eisenBarren", 1],
@@ -586,7 +586,7 @@
       },
       
       "aluPlatte": {
-        wert: 0,
+        wert: 409,
         dauer: 1.2,
         itemsRequired: [
           ["aluBarren", 1],
@@ -594,7 +594,7 @@
       },
       
       "stahlPlatte": {
-        wert: 0,
+        wert: 257,
         dauer: 1.2,
         itemsRequired: [
           ["stahlBarren", 1],
@@ -602,7 +602,7 @@
       },
       
       "aluBox": {
-        wert: 0,
+        wert: 1225,
         dauer: 1.2,
         itemsRequired: [
           ["aluBarren", 3],
@@ -759,6 +759,7 @@
       "getriebeoil": 135,
       "motoroil": 65,
       "craft_blanko": 1000,
+      
     };
 
     const select = document.getElementById("itemSelect");
@@ -912,7 +913,7 @@ function zeigeErgebnis(itemKey) {
     rohstoffAusgabe +
     prozessAusgabe +
     `\n💰 Kaufbare Materialkosten: ${gesamtKosten} €` +
-//    `\n💰 Gesamtwert: ${gesamtWert} €` +
+    `\n💰 Gesamtwert: ${gesamtWert} €` +
 //   `\n📈 Gewinn: ${gewinn} €` +
     //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
