@@ -31,12 +31,25 @@
     outline: none;
     border-color: #666;
   }
+
+  .kopfzeile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kopfzeile img {
+  max-height: 80px; /* begrenzt die Höhe, damit das Bild optisch passt */
+}
 </style>
 </head>
 <body>
   
+<div class="kopfzeile">
+  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/39d71e717043916a2fb382dd0c58b7c98963335d/LOGO_LostParadise.png" alt="Lostparadise.eu logo" width="100" />
   <h1>Lostparadise.eu - Crafting-System</h1>
-  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/39d71e717043916a2fb382dd0c58b7c98963335d/LOGO_LostParadise.png" alt="Lostparadise.eu logo" width="300" />
+</div>
+
   <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
     <option value="">-- Item auswählen --</option>
   </select>
