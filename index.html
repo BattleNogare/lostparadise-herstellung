@@ -918,7 +918,7 @@ function zeigeErgebnis(itemKey) {
   const arbeitszeitkosten = (dauerInStunden * 300000);
   const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
   const gesamtkosten3 = (gesamtkosten2 * 2);
-  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten2 / 1000) * 1000;
+  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 1000) * 1000;
   
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
@@ -928,7 +928,7 @@ function zeigeErgebnis(itemKey) {
 //   `\n📈 Gewinn: ${gewinn} €` +
     //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden` +
-    `\n🕒 Arbeitszeitkosten (Dauer * 300000 €/h): ${arbeitszeitkosten} €` +
+    `\n🕒 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
     `\n🕒 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
   
   
