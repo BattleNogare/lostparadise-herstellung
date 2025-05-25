@@ -3,15 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <title>Crafting-System - Lostparadise.eu</title>
-  <style>
-    body { font-family: Arial; margin: 2rem; }
-    select, pre { font-size: 1rem; padding: 0.5rem; width: 50%; }
-    pre { background: #f0f0f0; padding: 1rem; white-space: pre-wrap; }
-  </style>
+<style>
+  body {
+    font-family: Arial;
+    margin: 2rem;
+    background-color: #1e1e1e; /* Dunkler Hintergrund */
+    color: #f0f0f0;            /* Helle Schriftfarbe */
+  }
+
+  select, pre {
+    font-size: 1rem;
+    padding: 0.5rem;
+    width: 50%;
+    background-color: #2b2b2b; /* dunkler Hintergrund für Inputs */
+    color: #ffffff;
+    border: 1px solid #444;     /* dezente Umrandung */
+  }
+
+  pre {
+    background: #2e2e2e;       /* dunkleres Grau für Ausgabe */
+    padding: 1rem;
+    white-space: pre-wrap;
+    border: 1px solid #555;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #666;
+  }
+</style>
 </head>
 <body>
-  <img src="https://github.com/BattleNogare/lostparadise-herstellung/blob/39d71e717043916a2fb382dd0c58b7c98963335d/LOGO_LostParadise.png" alt="Lostparadise.eu logo" width="300" />
-  <h1>Lostparadise.eu - Crafting-System</h1>
+  
+  <h1>Lostparadise.eu - Crafting-System</h1><img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/39d71e717043916a2fb382dd0c58b7c98963335d/LOGO_LostParadise.png" alt="Lostparadise.eu logo" width="300" />
   <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
     <option value="">-- Item auswählen --</option>
   </select>
