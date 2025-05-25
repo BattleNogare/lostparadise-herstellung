@@ -915,8 +915,10 @@ function zeigeErgebnis(itemKey) {
   const gewinn = gesamtWert - gesamtKosten;
   const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
   const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
-  const arbeitszeitkosten = (dauerInStunden * 300000).toFixed(2);
-  const gesamtkostenfinal = (gesamtKosten + arbeitszeitkosten) * 1.3;
+  const arbeitszeitkosten = (dauerInStunden * 300000);
+  const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
+  const gesamtkosten3 = (gesamtkosten2 * 2);
+  
   
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
@@ -927,7 +929,7 @@ function zeigeErgebnis(itemKey) {
     //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden`;
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtDauer} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden` +
     `\n🕒 Arbeitszeitkosten (Dauer * 300000 €/h): ${arbeitszeitkosten} €` +
-    `\n🕒 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkostenfinal} €`;
+    `\n🕒 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3} €`;
   
   
 }
