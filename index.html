@@ -918,7 +918,7 @@ function zeigeErgebnis(itemKey) {
   const arbeitszeitkosten = (dauerInStunden * 300000);
   const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
   const gesamtkosten3 = (gesamtkosten2 * 2);
-  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 1000) * 1000;
+  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 10000) * 10000;
   
   document.getElementById("ausgabe").textContent =
     rohstoffAusgabe +
