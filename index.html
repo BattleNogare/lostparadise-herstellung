@@ -918,7 +918,7 @@ function zeigeErgebnis(itemKey) {
   const dauerInStunden = (gesamtdauer2 / 3600).toFixed(2);
   const arbeitszeitkosten = (dauerInStunden * 300000);
   const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
-  const gesamtkosten3 = (gesamtkosten2 * 1.3);
+  const gesamtkosten3 = (gesamtkosten2 * 1.5);
   const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 10000) * 10000;
   
   document.getElementById("ausgabe").textContent =
