@@ -914,8 +914,8 @@ function zeigeErgebnis(itemKey) {
   const gesamtWert = daten.wert || 0;
   const gewinn = gesamtWert - gesamtKosten;
   const gesamtdauer2 = (gesamtDauer)
-  const dauerInMinuten = (gesamtdauer2 / 60).toFixed(2);
-  const dauerInStunden = (gesamtdauer2 / 3600).toFixed(2);
+  const dauerInMinuten = (gesamtdauer2 / 60).toFixed(1);
+  const dauerInStunden = (gesamtdauer2 / 3600).toFixed(1);
   const arbeitszeitkosten = (dauerInStunden * 300000);
   const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
   const gesamtkosten3 = (gesamtkosten2 * 1.5);
