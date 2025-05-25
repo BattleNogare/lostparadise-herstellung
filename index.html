@@ -611,7 +611,7 @@
             
       "Rucksack": {
         wert: 0,
-        dauer: 0,
+        dauer: 1320,
         itemsRequired: [
           ["stoff", 200],
           ["schwer_stoff", 100],
@@ -913,7 +913,7 @@ function zeigeErgebnis(itemKey) {
 
   const gesamtWert = daten.wert || 0;
   const gewinn = gesamtWert - gesamtKosten;
-  const gesamtdauer2 (gesamtDauer + 3600)
+  const gesamtdauer2 = (gesamtDauer)
   const dauerInMinuten = (gesamtdauer2 / 60).toFixed(2);
   const dauerInStunden = (gesamtdauer2 / 3600).toFixed(2);
   const arbeitszeitkosten = (dauerInStunden * 300000);
@@ -928,7 +928,7 @@ function zeigeErgebnis(itemKey) {
  //   `\n💰 Gesamtwert: ${gesamtWert} €` +
 //   `\n📈 Gewinn: ${gewinn} €` +
     //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtdauer2} Sekunden`;
-    `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden` +
+    `\n⏱️ Herstellungsdauer Werkbank + Transportzeit: ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden` +
     `\n🕒 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
     `\n🕒 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
   
