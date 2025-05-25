@@ -915,9 +915,9 @@ function zeigeErgebnis(itemKey) {
   const gewinn = gesamtWert - gesamtKosten;
   const dauerInMinuten = (gesamtDauer / 60).toFixed(2);
   const dauerInStunden = (gesamtDauer / 3600).toFixed(2);
-  const arbeitszeitkosten = (dauerInStunden * 300000);
+  const arbeitszeitkosten = ((dauerInStunden + 1) * 300000);
   const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
-  const gesamtkosten3 = (gesamtkosten2 * 2);
+  const gesamtkosten3 = (gesamtkosten2 * 1.3);
   const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 10000) * 10000;
   
   document.getElementById("ausgabe").textContent =
