@@ -902,7 +902,13 @@
         });
       }
 
-      pfad.forEach(i => sammleMaterialien(i));
+      let startIndex = 0;
+      if (start) {
+        startIndex = pfad.indexOf(start) + 1;
+      }
+      for (let i = startIndex; i < pfad.length; i++) {
+        sammleMaterialien(pfad[i]);
+      }
 
       let rohstoffText = "📦 Rohstoffliste:\n";
       let gesamt = 0;
