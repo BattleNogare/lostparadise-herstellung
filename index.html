@@ -827,21 +827,31 @@
       });
     });
 
-    function findeRezeptPfad(start, ziel) {
-      const pfad = [];
-      let current = ziel;
-      while (current && current !== start) {
-        pfad.unshift(current);
-        const rezept = rezepte[current];
-        if (!rezept) return null;
-        const vorgaenger = rezept.itemsRequired.find(([item]) => item.startsWith("craft_"));
-        if (!vorgaenger) break;
-        current = vorgaenger[0];
-      }
-      if (start && current !== start) return null;
-      if (!start) pfad.unshift(current);
+function findeRezeptPfad(start, ziel) {
+  const pfad = [];
+  let current = ziel;
+
+  while (current) {
+    pfad.unshift(current);
+    const rezept = rezepte[current];
+    if (!rezept) return null;
+
+    const vorgaenger = rezept.itemsRequired.find(([item]) =>
+      item.startsWith("craft_") && rezepte[item]
+    );
+
+    if (!vorgaenger) break;
+    current = vorgaenger[0];
+
+    if (start && current === start) {
+      pfad.unshift(current);
       return pfad;
     }
+  }
+
+  // Wenn kein Start definiert war, gib gesamten Pfad bis Anfang zurück
+  return start ? null : pfad;
+}
 
     function berechneMaterialien(pfad) {
       const rohstoffe = {};
