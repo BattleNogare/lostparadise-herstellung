@@ -3,67 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <title>Crafting-System - Lostparadise.eu</title>
-<style>
-  body {
-    font-family: Arial;
-    margin: 2rem;
-    background-color: #0d1117; /* Dunkler Hintergrund */
-    color: #f0f0f0;            /* Helle Schriftfarbe */
-  }
+  <style>
+    body {
+      font-family: Arial;
+      margin: 2rem;
+      background-color: #0d1117;
+      color: #f0f0f0;
+    }
 
-  select, pre {
-    font-size: 1rem;
-    padding: 0.5rem;
-    width: 50%;
-    background-color: #151b23; /* dunkler Hintergrund für Inputs */
-    color: #ffffff;
-    border: 1px solid #666;     /* dezente Umrandung */
-  }
+    select, pre {
+      font-size: 1rem;
+      padding: 0.5rem;
+      width: 48%;
+      background-color: #151b23;
+      color: #ffffff;
+      border: 1px solid #666;
+      margin-bottom: 1rem;
+    }
 
-  pre {
-    background: #2e2e2e;       /* dunkleres Grau für Ausgabe */
-    padding: 1rem;
-    white-space: pre-wrap;
-    border: 1px solid #666;
-  }
+    pre {
+      background: #2e2e2e;
+      padding: 1rem;
+      white-space: pre-wrap;
+      border: 1px solid #666;
+    }
 
-  select:focus {
-    outline: none;
-    border-color: #666;
-  }
+    select:focus {
+      outline: none;
+      border-color: #666;
+    }
 
-  .kopfzeile {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+    .kopfzeile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-.kopfzeile img {
-  max-height: 80px; /* begrenzt die Höhe, damit das Bild optisch passt */
-}
-#ausgabe {
-  /* background-image: url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/dc558c11e645bc929fc6ca58a5dcedfd89e63790/motorbackground3.png'); */
-  
-  background-size: cover;        
-  background-repeat: no-repeat;  
-  background-position: center;   
-  color: white;                 
-  padding: 1rem;
-  border: 1px solid #666;
-}
-</style>
+    .kopfzeile img {
+      max-height: 80px;
+    }
+
+    #ausgabe {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding: 1rem;
+      border: 1px solid #666;
+    }
+  </style>
 </head>
 <body>
-  
-<div class="kopfzeile">
-  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/8c16ed8a0e0b9f02aaaca93c4970dc576722484c/Lostparadise-Crafting2.png" alt="Lostparadise.eu logo" width="100" />
-  <h1>Lostparadise.eu - Crafting-System</h1>
-</div>
-<br />
-  <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
-    <option value="">-- Item auswählen --</option>
-  </select>
+  <div class="kopfzeile">
+    <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/8c16ed8a0e0b9f02aaaca93c4970dc576722484c/Lostparadise-Crafting2.png" alt="Lostparadise.eu logo" width="100" />
+    <h1>Lostparadise.eu - Crafting-System</h1>
+  </div>
+
   <br />
+
+  <select id="startSelect">
+    <option value="">-- Startprodukt auswählen --</option>
+  </select>
+
+  <select id="endSelect">
+    <option value="">-- Endprodukt auswählen --</option>
+  </select>
 
   <pre id="ausgabe"></pre>
 
@@ -690,7 +693,7 @@
 
       
     };
-
+	
     const anzeigeNamen = {
       "craft_1": "Corvette C2",
       "craft_2": "Corvette C2 Stingray",
@@ -786,7 +789,8 @@
       
       
     };
-
+	
+	
     const fundorte = {
       "kohleBraun": "Kohlemine",
       "kohleStein": "Kohlemine",
@@ -803,7 +807,8 @@
     
     
     };
-
+	
+	
     const rohstoffPreise = {
       "schwefelacid": 85,
       "gummi": 255,
@@ -821,179 +826,112 @@
       "kohleStein": 29,
     };
 
-    const select = document.getElementById("itemSelect");
+    const erlaubteItems = Object.keys(rezepte).filter(k => k.startsWith("craft_"));
+
+    const startSelect = document.getElementById("startSelect");
+    const endSelect = document.getElementById("endSelect");
     const ausgabe = document.getElementById("ausgabe");
 
-const erlaubteItems = [
-  "craft_1",
-  "craft_2",
-  "craft_3",
-  "craft_4",
-  "craft_5",
-  "craft_6",
-  "craft_7",
-  "craft_8",
-  "craft_9",
-  "craft_10",
-  "craft_11",
-  "craft_12",
-  "craft_13",
-  "craft_14",
-  "craft_15",
-  "craft_16",
-  "craft_17",
-  "craft_18",
-  "craft_19",
-  "craft_20",
-  "craft_21",
-  "craft_22",
-  "craft_23",
-  "Rucksack",
-  // Füge hier weitere craft-Keys hinzu, die angezeigt werden sollen
-];
+    erlaubteItems.forEach(key => {
+      const name = anzeigeNamen[key] || key;
+      [startSelect, endSelect].forEach(sel => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = name;
+        sel.appendChild(opt);
+      });
+    });
 
-for (let key of erlaubteItems) {
-  if (rezepte[key]) {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = anzeigeNamen[key] || key;
-    select.appendChild(opt);
-  }
-}
+    function findeRezeptPfad(start, ziel) {
+      const pfad = [];
+      let current = ziel;
 
-    function zeigeRezept() {
-      const key = select.value;
-      if (!key) return ausgabe.textContent = "";
+      while (current && current !== start) {
+        const rezept = rezepte[current];
+        if (!rezept) return null;
 
-      const materialien = {};
-      let gesamtDauer = 0;
+        const vorgänger = rezept.itemsRequired.find(([item]) => item.startsWith("craft_"));
+        if (!vorgänger) break;
 
-      const herstellung = verarbeiteRezept(key, 0, materialien, (dauer) => gesamtDauer += dauer);
-      const { liste, kosten } = generiereMaterialListe(materialien);
-      const gesamtWert = rezepte[key]?.wert || 0;
-      const gewinn = gesamtWert - kosten;
-
-      ausgabe.textContent = herstellung +
-        "\n📦 Gesamtliste Rohstoffe:\n" + liste +
-        `\n💰 Materialkosten: ${kosten} €` +
-        `\n💰 Gesamtwert: ${gesamtWert} €` +
-        `\n📈 Gewinn: ${gewinn} €` +
-        `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
-    }
-
-function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}, aufrufKette = {}) {
-  const daten = rezepte[item];
-  if (!daten || !daten.itemsRequired) return;
-
-  if (!zwischenprodukte[item]) {
-    zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
-  }
-  zwischenprodukte[item].menge += menge;
-
-  for (const [subItem, subMenge] of daten.itemsRequired) {
-    const gesamtMenge = subMenge * menge;
-
-    if (rezepte[subItem]) {
-      berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
-    } else {
-      if (!rohstoffe[subItem]) {
-        rohstoffe[subItem] = { menge: 0, verwendetIn: {} };
+        pfad.unshift(current);
+        current = vorgänger[0];
       }
-      rohstoffe[subItem].menge += gesamtMenge;
-      const inProdukt = anzeigeNamen[item] || item;
-      rohstoffe[subItem].verwendetIn[inProdukt] = (rohstoffe[subItem].verwendetIn[inProdukt] || 0) + gesamtMenge;
+
+      if (current !== start) return null;
+
+      pfad.unshift(start);
+      return pfad;
     }
-  }
-}
 
-function zeigeErgebnis(itemKey) {
-  const rohstoffe = {}, zwischenprodukte = {};
-  let gesamtDauer = 0;
-  const daten = rezepte[itemKey];
-  const menge = 1;
+    function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}) {
+      const daten = rezepte[item];
+      if (!daten || !daten.itemsRequired) return;
 
-  berechneMaterialienUndProzesse(itemKey, menge, rohstoffe, zwischenprodukte);
+      if (!zwischenprodukte[item]) {
+        zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
+      }
+      zwischenprodukte[item].menge += menge;
 
-  // Dauer berechnen
-  function berechneDauer(item, menge) {
-    const data = rezepte[item];
-    if (data?.dauer) gesamtDauer += data.dauer * menge;
+      for (const [subItem, subMenge] of daten.itemsRequired) {
+        const gesamtMenge = subMenge * menge;
 
-    for (const [sub, m] of data?.itemsRequired || []) {
-      if (rezepte[sub]) berechneDauer(sub, m * menge);
+        if (rezepte[subItem]) {
+          berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
+        } else {
+          if (!rohstoffe[subItem]) {
+            rohstoffe[subItem] = { menge: 0 };
+          }
+          rohstoffe[subItem].menge += gesamtMenge;
+        }
+      }
     }
-  }
-  berechneDauer(itemKey, menge);
 
-  // Rohstoffliste
-  let rohstoffAusgabe = "📦 Gesamtliste Rohstoffe:\n";
-  let gesamtKosten = 0;
-  for (const key in rohstoffe) {
-    const eintrag = rohstoffe[key];
-    const name = anzeigeNamen[key] || key;
-    const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-    const preis = rohstoffPreise[key] || 0;
-    const kosten = preis * eintrag.menge;
-    gesamtKosten += kosten;
-    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} €\n`;
-    for (const verb in eintrag.verwendetIn) {
-      rohstoffAusgabe += `    ↳ benutzt in: ${verb} (${eintrag.verwendetIn[verb]})\n`;
+    function updatePfadAnzeige() {
+      const start = startSelect.value;
+      const ziel = endSelect.value;
+      if (!start || !ziel || start === ziel) {
+        ausgabe.textContent = "Bitte gültige Start- und Endprodukte auswählen.";
+        return;
+      }
+
+      const pfad = findeRezeptPfad(start, ziel);
+      if (!pfad) {
+        ausgabe.textContent = "⚠️ Kein Pfad von Start zu Ziel gefunden.";
+        return;
+      }
+
+      const rohstoffe = {};
+      const zwischenprodukte = {};
+      pfad.slice(1).forEach(item => {
+        berechneMaterialienUndProzesse(item, 1, rohstoffe, zwischenprodukte);
+      });
+
+      let text = `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n`;
+
+      text += "📦 Benötigte Rohstoffe:\n";
+      for (const key in rohstoffe) {
+        const name = anzeigeNamen[key] || key;
+        const menge = rohstoffe[key].menge;
+        const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
+        text += `- ${menge}x ${name}${ort}\n`;
+      }
+
+      text += "\n🔧 Herstellprozesse:\n";
+      for (const item of pfad.slice(1)) {
+        const rezept = rezepte[item];
+        const name = anzeigeNamen[item] || item;
+        text += `- ${name}:\n`;
+        rezept.itemsRequired.forEach(([roh, menge]) => {
+          const rName = anzeigeNamen[roh] || roh;
+          text += `    ⤷ ${menge}x ${rName}\n`;
+        });
+      }
+
+      ausgabe.textContent = text;
     }
-  }
 
-  // Herstellprozesse
-  let prozessAusgabe = "\n🔧 Herstellprozesse:\n";
-  const anzeigeSortiert = Object.entries(zwischenprodukte)
-    .filter(([k]) => k !== itemKey)
-    .sort((a, b) => b[1].menge - a[1].menge);
-
-  for (const [prod, details] of anzeigeSortiert) {
-    const name = anzeigeNamen[prod] || prod;
-    prozessAusgabe += `- ${details.menge}x ${name}\n`;
-    for (const [roh, m] of details.bestandteile) {
-      const rohName = anzeigeNamen[roh] || roh;
-      prozessAusgabe += `    ⤷ ${m * details.menge}x ${rohName}\n`;
-    }
-  }
-
-  const hauptProdukt = anzeigeNamen[itemKey] || itemKey;
-  prozessAusgabe += `\n- ${menge}x ${hauptProdukt}\n`;
-  for (const [roh, m] of daten.itemsRequired) {
-    const name = anzeigeNamen[roh] || roh;
-    prozessAusgabe += `    ⤷ ${m * menge}x ${name}\n`;
-  }
-
-  const gesamtWert = daten.wert || 0;
-  const gewinn = gesamtWert - gesamtKosten;
-  const gesamtdauer2 = (gesamtDauer)
-  const dauerInMinuten = (gesamtdauer2 / 60).toFixed(1);
-  const dauerInStunden = (gesamtdauer2 / 3600).toFixed(1);
-  const arbeitszeitkosten = (dauerInStunden * 300000);
-  const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
-  const gesamtkosten3 = (gesamtkosten2 * 1.5);
-  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 10000) * 10000;
-  
-  document.getElementById("ausgabe").textContent =
-    rohstoffAusgabe +
-    prozessAusgabe +
-    `\n💰 Materialkosten: ${gesamtKosten} €`; 
- //   `\n💰 Gesamtwert: ${gesamtWert} €` +
-//   `\n📈 Gewinn: ${gewinn} €` +
-    //`\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtdauer2} Sekunden`;
-    //`\n⏱️ Herstellungsdauer Werkbank + Transportzeit:` +
-    //`\n⏱️ ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
-    //`\n📈 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
-    //`\n💰 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
-  
-  
-}
-
-
-select.addEventListener("change", () => {
-  zeigeErgebnis(select.value);
-});
-
-
+    startSelect.addEventListener("change", updatePfadAnzeige);
+    endSelect.addEventListener("change", updatePfadAnzeige);
   </script>
 </body>
 </html>
