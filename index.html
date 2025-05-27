@@ -903,55 +903,129 @@ function findeRezeptPfad(start, ziel) {
     }
 
     function updateAnzeige() {
-      const start = startSelect.value;
-      const ziel = endSelect.value;
+  const start = startSelect.value;
+  const ziel = endSelect.value;
 
-      if (!ziel) {
-        ausgabe.textContent = "❗ Bitte ein Zielprodukt auswählen.";
-        return;
+  if (!ziel) {
+    ausgabe.textContent = "❗ Bitte ein Zielprodukt auswählen.";
+    return;
+  }
+
+  const pfad = findeRezeptPfad(start, ziel);
+  if (!pfad) {
+    ausgabe.textContent = "⚠️ Kein Pfad von Start zu Ziel gefunden.";
+    return;
+  }
+
+  // 1. Rohstoffliste vorbereiten
+  const rohstoffe = {};
+  const verwendetInMap = {};
+  const gebaut = new Set();
+
+  function sammleMaterialien(item, menge = 1) {
+    const rezept = rezepte[item];
+    if (!rezept) return;
+
+    rezept.itemsRequired.forEach(([roh, m]) => {
+      const total = m * menge;
+
+      if (rezepte[roh]) {
+        sammleMaterialien(roh, total);
+
+        // "verwendet in"
+        if (!verwendetInMap[roh]) verwendetInMap[roh] = new Set();
+        verwendetInMap[roh].add(item);
+      } else {
+        if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, verwendetIn: {} };
+        rohstoffe[roh].menge += total;
+
+        const verwendung = anzeigeNamen[item] || item;
+        rohstoffe[roh].verwendetIn[verwendung] = (rohstoffe[roh].verwendetIn[verwendung] || 0) + total;
       }
+    });
+  }
 
-      const pfad = findeRezeptPfad(start, ziel);
-      if (!pfad) {
-        ausgabe.textContent = "⚠️ Kein Pfad von Start zu Ziel gefunden.";
-        return;
-      }
+  pfad.forEach(i => sammleMaterialien(i));
 
-      const rohstoffe = berechneMaterialien(pfad);
-      const plan = baueHerstellplan(pfad);
+  // 2. Rohstoffliste ausgeben
+  let rohstoffText = "📦 Rohstoffliste:\n";
+  let gesamt = 0;
+  for (const key in rohstoffe) {
+    const eintrag = rohstoffe[key];
+    const name = anzeigeNamen[key] || key;
+    const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
+    const preis = rohstoffPreise[key] || 0;
+    const kosten = preis * eintrag.menge;
+    gesamt += kosten;
 
-      let rohstoffText = "📦 Rohstoffliste:\n";
-      let gesamt = 0;
-      for (const key in rohstoffe) {
-        const eintrag = rohstoffe[key];
-        const name = anzeigeNamen[key] || key;
-        const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-        const preis = rohstoffPreise[key] || 0;
-        const kosten = preis * eintrag.menge;
-        gesamt += kosten;
-
-        rohstoffText += `- ${eintrag.menge}x ${name}${ort} à ${preis} € = ${kosten} €\n`;
-        for (const verwendung in eintrag.verwendetIn) {
-          rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
-        }
-      }
-
-      let planText = "\n🔧 Herstellungsplan (minimale Schritte):\n";
-      for (const schritt of plan) {
-        const name = anzeigeNamen[schritt.item] || schritt.item;
-        planText += `- ${schritt.menge}x ${name}:\n`;
-        schritt.zutaten.forEach(([roh, menge]) => {
-          const zName = anzeigeNamen[roh] || roh;
-          planText += `    ⤷ ${menge * schritt.menge}x ${zName}\n`;
-        });
-      }
-
-      ausgabe.textContent =
-        `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
-        rohstoffText +
-        `\n💰 Gesamtkosten: ${gesamt} €\n` +
-        planText;
+    rohstoffText += `- ${eintrag.menge}x ${name}${ort} à ${preis} € = ${kosten} €\n`;
+    for (const verwendung in eintrag.verwendetIn) {
+      rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
     }
+  }
+
+  // 3. Herstellung nach Rohstoffen und Verwendung sortiert
+  let herstellungText = "\n🔧 Herstellplan (nach verwendeten Zwischenprodukten):\n";
+
+  function baueHerstellungSortiert() {
+    const bauschritte = [];
+    const besucht = new Set();
+
+    function baue(item, menge = 1) {
+      if (besucht.has(item)) return;
+      besucht.add(item);
+
+      const rezept = rezepte[item];
+      if (!rezept) return;
+
+      // Erst die Zutaten bauen
+      for (const [roh, m] of rezept.itemsRequired) {
+        if (rezepte[roh]) baue(roh, m * menge);
+      }
+
+      bauschritte.push({ item, menge, zutaten: rezept.itemsRequired });
+    }
+
+    pfad.forEach(i => baue(i));
+
+    return bauschritte;
+  }
+
+  const bauschritte = baueHerstellungSortiert();
+
+  // Gruppieren nach: Was wird für welches Item gebaut
+  const gruppiert = {};
+
+  for (const schritt of bauschritte) {
+    for (const [roh] of schritt.zutaten) {
+      if (!rezepte[roh]) continue; // Nur Zwischenprodukte
+      if (!gruppiert[roh]) gruppiert[roh] = [];
+      gruppiert[roh].push(schritt);
+    }
+  }
+
+  // Ausgabe sortiert
+  const bereitsGedruckt = new Set();
+  for (const schritt of bauschritte) {
+    const { item, menge, zutaten } = schritt;
+    if (bereitsGedruckt.has(item)) continue;
+    bereitsGedruckt.add(item);
+
+    const name = anzeigeNamen[item] || item;
+    herstellungText += `- ${menge}x ${name}:\n`;
+    for (const [roh, m] of zutaten) {
+      const rName = anzeigeNamen[roh] || roh;
+      herstellungText += `    ⤷ ${m * menge}x ${rName}\n`;
+    }
+  }
+
+  ausgabe.textContent =
+    `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
+    rohstoffText +
+    `\n💰 Gesamtkosten: ${gesamt} €\n` +
+    herstellungText;
+}
+
 
     startSelect.addEventListener("change", updateAnzeige);
     endSelect.addEventListener("change", updateAnzeige);
