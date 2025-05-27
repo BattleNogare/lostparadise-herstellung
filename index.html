@@ -817,7 +817,6 @@
     const ausgabe = document.getElementById("ausgabe");
 
     const erlaubteItems = Object.keys(rezepte).filter(k => k.startsWith("craft_"));
-
     erlaubteItems.forEach(key => {
       const name = anzeigeNamen[key] || key;
       [startSelect, endSelect].forEach(sel => {
@@ -844,34 +843,53 @@
       return pfad;
     }
 
-    function berechnePfadMaterialienUndHerstellung(pfad) {
+    function berechneMaterialien(pfad) {
       const rohstoffe = {};
-      let gesamtKosten = 0;
-      let herstellung = "";
+      const verwendetIn = {};
+      const visited = new Set();
 
-      function recurse(item, menge, ebene) {
+      function recurse(item, menge, kette = []) {
         const rezept = rezepte[item];
-        if (!rezept) return;
-        const name = anzeigeNamen[item] || item;
-        herstellung += `${"  ".repeat(ebene)}🔨 ${menge}x ${name}\n`;
-        for (const [roh, m] of rezept.itemsRequired) {
-          const gesamtMenge = menge * m;
-          const rohName = anzeigeNamen[roh] || roh;
+        if (!rezept || visited.has(item + menge)) return;
+        visited.add(item + menge);
+
+        rezept.itemsRequired.forEach(([roh, m]) => {
+          const total = menge * m;
           if (rezepte[roh]) {
-            recurse(roh, gesamtMenge, ebene + 1);
+            recurse(roh, total, [...kette, item]);
           } else {
-            const preis = rohstoffPreise[roh] || 0;
-            const kosten = gesamtMenge * preis;
-            gesamtKosten += kosten;
-            if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, preis };
-            rohstoffe[roh].menge += gesamtMenge;
-            herstellung += `${"  ".repeat(ebene + 1)}📦 ${gesamtMenge}x ${rohName} à ${preis} € = ${kosten} €\n`;
+            if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, verwendetIn: {} };
+            rohstoffe[roh].menge += total;
+
+            const verwendung = anzeigeNamen[item] || item;
+            rohstoffe[roh].verwendetIn[verwendung] = (rohstoffe[roh].verwendetIn[verwendung] || 0) + total;
           }
-        }
+        });
       }
 
-      pfad.forEach(item => recurse(item, 1, 0));
-      return { rohstoffe, herstellung, gesamtKosten };
+      pfad.forEach(item => recurse(item, 1));
+      return rohstoffe;
+    }
+
+    function baueHerstellplan(pfad) {
+      const gebaut = new Set();
+      const schritte = [];
+
+      function baue(item, menge) {
+        if (gebaut.has(item)) return;
+        gebaut.add(item);
+
+        const rezept = rezepte[item];
+        if (!rezept) return;
+        for (const [roh, m] of rezept.itemsRequired) {
+          if (rezepte[roh]) baue(roh, m * menge);
+        }
+
+        schritte.push({ item, menge, zutaten: rezept.itemsRequired });
+      }
+
+      pfad.forEach(i => baue(i, 1));
+      return schritte;
     }
 
     function updateAnzeige() {
@@ -889,22 +907,40 @@
         return;
       }
 
-      const { rohstoffe, herstellung, gesamtKosten } = berechnePfadMaterialienUndHerstellung(pfad);
+      const rohstoffe = berechneMaterialien(pfad);
+      const plan = baueHerstellplan(pfad);
 
-      let materialText = "📦 Rohstoffliste:\n";
+      let rohstoffText = "📦 Rohstoffliste:\n";
+      let gesamt = 0;
       for (const key in rohstoffe) {
-        const { menge, preis } = rohstoffe[key];
-        const kosten = menge * preis;
+        const eintrag = rohstoffe[key];
         const name = anzeigeNamen[key] || key;
         const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-        materialText += `- ${menge}x ${name}${ort} à ${preis} € = ${kosten} €\n`;
+        const preis = rohstoffPreise[key] || 0;
+        const kosten = preis * eintrag.menge;
+        gesamt += kosten;
+
+        rohstoffText += `- ${eintrag.menge}x ${name}${ort} à ${preis} € = ${kosten} €\n`;
+        for (const verwendung in eintrag.verwendetIn) {
+          rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
+        }
+      }
+
+      let planText = "\n🔧 Herstellungsplan (minimale Schritte):\n";
+      for (const schritt of plan) {
+        const name = anzeigeNamen[schritt.item] || schritt.item;
+        planText += `- ${schritt.menge}x ${name}:\n`;
+        schritt.zutaten.forEach(([roh, menge]) => {
+          const zName = anzeigeNamen[roh] || roh;
+          planText += `    ⤷ ${menge * schritt.menge}x ${zName}\n`;
+        });
       }
 
       ausgabe.textContent =
         `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
-        "🔧 Herstellungsreihenfolge:\n" + herstellung +
-        "\n" + materialText +
-        `\n💰 Gesamtkosten (nur Material): ${gesamtKosten} €`;
+        rohstoffText +
+        `\n💰 Gesamtkosten: ${gesamt} €\n` +
+        planText;
     }
 
     startSelect.addEventListener("change", updateAnzeige);
