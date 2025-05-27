@@ -920,7 +920,7 @@
         const kosten = preis * eintrag.menge;
         gesamt += kosten;
 
-        rohstoffText += `- ${eintrag.menge}x ${name}${ort} à ${preis} € = ${kosten} €\n`;
+        rohstoffText += `- ${eintrag.menge}x ${name}${ort} ${preis} €/St = ${kosten} €\n`;
         for (const verwendung in eintrag.verwendetIn) {
           rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
         }
