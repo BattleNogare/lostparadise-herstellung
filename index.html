@@ -827,6 +827,7 @@
 function updateAnzeige() {
   const start = startSelect.value;
   const ziel = endSelect.value;
+const geplanteHerstellungen = new Set(pfad.slice(startIndex));
 
   if (!ziel) {
     ausgabe.textContent = "❗ Bitte ein Zielprodukt auswählen.";
@@ -847,31 +848,34 @@ function updateAnzeige() {
     startIndex = pfad.indexOf(start) + 1;
   }
 
-  const bereitsVorhanden = new Set();
-  if (start) {
-    bereitsVorhanden.add(start);
-  }
+const bereitsVorhanden = new Set();
+if (start) {
+  bereitsVorhanden.add(start);
+}
 
-  function sammleMaterialien(item, menge = 1) {
-    const rezept = rezepte[item];
-    if (!rezept) return;
+function sammleMaterialien(item, menge = 1) {
+  const rezept = rezepte[item];
+  if (!rezept) return;
 
-    rezept.itemsRequired.forEach(([roh, m]) => {
-      const total = m * menge;
+  rezept.itemsRequired.forEach(([roh, m]) => {
+    const total = m * menge;
 
-      if (rezepte[roh]) {
-        if (bereitsVorhanden.has(roh)) return; // Unterprodukt schon vorhanden
-        sammleMaterialien(roh, total);
-        if (!verwendetInMap[roh]) verwendetInMap[roh] = new Set();
-        verwendetInMap[roh].add(item);
-      } else {
-        if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, verwendetIn: {} };
-        rohstoffe[roh].menge += total;
-        const verwendung = anzeigeNamen[item] || item;
-        rohstoffe[roh].verwendetIn[verwendung] = (rohstoffe[roh].verwendetIn[verwendung] || 0) + total;
-      }
-    });
-  }
+    if (rezepte[roh]) {
+      if (bereitsVorhanden.has(roh)) return; // ⛔ Schon im Besitz
+      if (geplanteHerstellungen.has(roh)) return; // ⛔ Wird separat im Pfad hergestellt
+      sammleMaterialien(roh, total);
+
+      if (!verwendetInMap[roh]) verwendetInMap[roh] = new Set();
+      verwendetInMap[roh].add(item);
+    } else {
+      if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, verwendetIn: {} };
+      rohstoffe[roh].menge += total;
+      const verwendung = anzeigeNamen[item] || item;
+      rohstoffe[roh].verwendetIn[verwendung] = (rohstoffe[roh].verwendetIn[verwendung] || 0) + total;
+    }
+  });
+}
+
 
   for (let i = startIndex; i < pfad.length; i++) {
     sammleMaterialien(pfad[i]);
