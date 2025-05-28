@@ -963,7 +963,7 @@
         return herstellungText;
       }
 
-      const herstellungAggregiert = baueAggregiertenHerstellplan(pfad.slice(startIndex));
+      const herstellungAggregiert = baueAggregiertenHerstellplan(pfad.slice(startIndex-1));
 
       ausgabe.textContent =
         `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
