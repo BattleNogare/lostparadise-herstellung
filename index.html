@@ -912,58 +912,59 @@
         }
       }
 
-      function baueAggregiertenHerstellplan(pfad) {
-        const gesamtBedarf = {};
-        const abhaengigkeiten = {};
+      function baueAggregiertenHerstellplan(pfad, startIndex = 0) {
+  const teilPfad = pfad.slice(startIndex);
+  const gesamtBedarf = {};
+  const abhaengigkeiten = {};
 
-        function zähle(item, menge = 1) {
-          if (!rezepte[item]) return;
-          if (!gesamtBedarf[item]) gesamtBedarf[item] = 0;
-          gesamtBedarf[item] += menge;
+  function zähle(item, menge = 1) {
+    if (!rezepte[item]) return;
+    if (!gesamtBedarf[item]) gesamtBedarf[item] = 0;
+    gesamtBedarf[item] += menge;
 
-          for (const [roh, m] of rezepte[item].itemsRequired) {
-            const total = m * menge;
-            if (!rezepte[roh]) continue;
-            if (!abhaengigkeiten[item]) abhaengigkeiten[item] = {};
-            if (!abhaengigkeiten[item][roh]) abhaengigkeiten[item][roh] = 0;
-            abhaengigkeiten[item][roh] += total;
-            zähle(roh, total);
-          }
-        }
+    for (const [roh, m] of rezepte[item].itemsRequired) {
+      const total = m * menge;
+      if (!rezepte[roh]) continue;
+      if (!abhaengigkeiten[item]) abhaengigkeiten[item] = {};
+      if (!abhaengigkeiten[item][roh]) abhaengigkeiten[item][roh] = 0;
+      abhaengigkeiten[item][roh] += total;
+      zähle(roh, total);
+    }
+  }
 
-        pfad.forEach(i => zähle(i));
+  teilPfad.forEach(i => zähle(i));
 
-        const topologischSortiert = [];
-        const besucht = new Set();
-        function sortiere(item) {
-          if (besucht.has(item)) return;
-          besucht.add(item);
-          const deps = abhaengigkeiten[item];
-          if (deps) {
-            for (const unter of Object.keys(deps)) sortiere(unter);
-          }
-          topologischSortiert.push(item);
-        }
-        pfad.forEach(i => sortiere(i));
+  const topologischSortiert = [];
+  const besucht = new Set();
+  function sortiere(item) {
+    if (besucht.has(item)) return;
+    besucht.add(item);
+    const deps = abhaengigkeiten[item];
+    if (deps) {
+      for (const unter of Object.keys(deps)) sortiere(unter);
+    }
+    topologischSortiert.push(item);
+  }
+  teilPfad.forEach(i => sortiere(i));
 
-        let herstellungText = "\n🔧 Herstellprozesse:\n";
-        for (const item of topologischSortiert) {
-          const menge = gesamtBedarf[item];
-          if (!menge || !rezepte[item]) continue;
-          const name = anzeigeNamen[item] || item;
-          herstellungText += `- ${menge}x ${name}\n`;
-          const unter = rezepte[item].itemsRequired;
-          for (const [roh, m] of unter) {
-            const total = m * menge;
-            const rName = anzeigeNamen[roh] || roh;
-            herstellungText += `    ⤷ ${total}x ${rName}\n`;
-          }
-        }
+  let herstellungText = "\n🔧 Herstellprozesse:\n";
+  for (const item of topologischSortiert) {
+    const menge = gesamtBedarf[item];
+    if (!menge || !rezepte[item]) continue;
+    const name = anzeigeNamen[item] || item;
+    herstellungText += `- ${menge}x ${name}\n`;
+    const unter = rezepte[item].itemsRequired;
+    for (const [roh, m] of unter) {
+      const total = m * menge;
+      const rName = anzeigeNamen[roh] || roh;
+      herstellungText += `    ⤷ ${total}x ${rName}\n`;
+    }
+  }
 
-        return herstellungText;
-      }
+  return herstellungText;
+}
 
-      const herstellungAggregiert = baueAggregiertenHerstellplan(pfad.slice(startIndex-2));
+      const herstellungAggregiert = baueAggregiertenHerstellplan(pfad, startIndex);
 
       ausgabe.textContent =
         `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
