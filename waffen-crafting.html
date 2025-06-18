@@ -46,17 +46,32 @@
   width: 47%;
 	
 }
+.link-button {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background-color: #151b23;
+  color: #ffd700;
+  text-decoration: none;
+  border: 1px solid #666;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.link-button:hover {
+  background-color: #ffd700;
+  color: #151b23;
+}
 	  
   </style>
 </head>
 <body>
   
 <div class="kopfzeile">
-  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/blob/07cf17a81e062d04753066bd4917552a3556c748/Lostparadise-CraftingWaffen.png" alt="Lostparadise.eu logo" width="100" />
+  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/blob/e901ad016bec9c7c5af3c3c7f9a4c144abb8941b/Lostparadise-CraftingWaffen.png" alt="Lostparadise.eu Waffen logo" width="100" />
   <h1>Lostparadise.eu - Waffen - Crafting-System</h1>
 </div>
 <br>
-	<a href="index.html">Zum Fahrzeug-Crafting</a>
+	<a href="index.html" class="link-button">Zum Fahrzeug-Crafting</a>
 </br>
 <br />
   <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
