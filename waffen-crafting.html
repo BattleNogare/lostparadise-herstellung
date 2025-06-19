@@ -420,33 +420,19 @@
     const fundorte = {
       "kohleBraun": "Kohlemine",
       "kohleStein": "Kohlemine",
-      "kupferErz": "Kupfermine",
-      "eisenErz": "Eisenmine",
-      "aluErz": "Bauxitmine",
-      "schwefelacid": "Chemiewerk",
-      "aluErz": "Bauxitmine",
       "plastic": "Chemiewerk",
       "gummi": "Chemiewerk",
-      "getriebeoil": "Baumarkt",
-      "motoroil": "Baumarkt",
-      "craft_blanko": "Baumarkt",
     
     
     };
 
     const rohstoffPreise = {
-      "schwefelacid": 85,
       "gummi": 255,
       "plastic": 175,
-      "getriebeoil": 135,
-      "motoroil": 65,
-      "craft_blanko": 1000,
       "aluBarren": 371,
-      "cotton": 150,
       "stahlBarren": 233,
       "eisenBarren": 81,
       "kupferBarren": 96,
-      "rubin": 532,
       "kohleBraun": 37,
       "kohleStein": 29,
     };
@@ -595,13 +581,13 @@ function zeigeErgebnis(itemKey) {
     rohstoffAusgabe +
     prozessAusgabe +
     `\n💰 Materialkosten: ${gesamtKosten} €`; 
- //   `\n💰 Gesamtwert: ${gesamtWert} €` +
-//   `\n📈 Gewinn: ${gewinn} €` +
+    `\n💰 Gesamtwert: ${gesamtWert} €` +
+   `\n📈 Gewinn: ${gewinn} €` +
     `\n⏱️ Herstellungsdauer Werkbank (gesamt): ${gesamtdauer2} Sekunden`;
-    //`\n⏱️ Herstellungsdauer Werkbank + Transportzeit:` +
-    //`\n⏱️ ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
-    //`\n📈 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
-    //`\n💰 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
+    `\n⏱️ Herstellungsdauer Werkbank + Transportzeit:` +
+    `\n⏱️ ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
+    `\n📈 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
+    `\n💰 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
   
   
 }
