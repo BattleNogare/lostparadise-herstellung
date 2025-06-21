@@ -99,12 +99,15 @@
 </div>	
 
   <pre id="ausgabe"></pre>
+  <img id="bildAnzeige" style="max-width: 400px; display: none; margin-top: 1rem;" />
+
 
   <script>
     const rezepte = {
       "craft_1": {
         wert: 0,
         dauer: 3720,
+	picture: "https://cdn.prod.website-files.com/63fe11299d35c575d57a5632/650ac67a9ce74441b7575544_Chevrolet%20Corvette%20C2%201.jpeg",
         itemsRequired: [
           ["craft_blanko", 1],
           ["schem_1", 1],
@@ -939,6 +942,15 @@
     `\n💰 Gesamtkosten: ${gesamt} €\n` +
     herstellungAggregiert;
 }
+const bildAnzeige = document.getElementById("bildAnzeige");
+const zielRezept = rezepte[ziel];
+if (zielRezept && zielRezept.picture) {
+  bildAnzeige.src = zielRezept.picture;
+  bildAnzeige.style.display = "block";
+} else {
+  bildAnzeige.style.display = "none";
+}
+
 
 function baueAggregiertenHerstellplan(pfad, startIndex = 0, bereitsVorhandenSet = new Set()) {
   const teilPfad = pfad.slice(startIndex);
