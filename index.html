@@ -67,6 +67,16 @@
   background-color: #ffd700;
   color: #151b23;
 }
+.ausgabe-wrapper {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.ausgabe-wrapper pre {
+  width: 47%;
+}
 
 
 	  
@@ -97,9 +107,12 @@
 	Verwendung auf eigene Gefahr<br>
 	Bekannter Fehler: Wenn kein Startpunkt ausgewählt wird beginnt er mit einem Getriebeteil was dazugezählt wird
 </div>	
-
+<div class="ausgabe-wrapper">
   <pre id="ausgabe"></pre>
   <img id="bildAnzeige" style="max-width: 400px; display: none; margin-top: 1rem;" />
+</div>
+
+  
 
 
   <script>
