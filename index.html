@@ -936,12 +936,12 @@
 
   const herstellungAggregiert = baueAggregiertenHerstellplan(pfad, startIndex, bereitsVorhanden);
 
-  ausgabe.textContent =
-    `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
-    rohstoffText +
-    `\n💰 Gesamtkosten: ${gesamt} €\n` +
-    herstellungAggregiert;
-}
+ausgabe.textContent =
+  `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
+  rohstoffText +
+  `\n💰 Gesamtkosten: ${gesamt} €\n` +
+  herstellungAggregiert;
+
 const bildAnzeige = document.getElementById("bildAnzeige");
 const zielRezept = rezepte[ziel];
 if (zielRezept && zielRezept.picture) {
