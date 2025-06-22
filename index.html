@@ -82,12 +82,33 @@
   max-width: 400px;
   max-height: 300px;
   display: none;
-  border: 2px solid #ffd700;      /* Goldgelber Rahmen */
-  border-radius: 8px;             /* Abgerundete Ecken */
-  padding: 4px;                   /* Innenabstand */
-  background-color: #2e2e2e;      /* Dunkler Hintergrund */
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); /* dezente Leuchtkante */
+
+  /* Technischer Rahmen */
+  border: 3px double #ccc;           /* Doppellinie wie technische Zeichnungen */
+  border-radius: 4px;
+  padding: 6px;
+  background-color: #1b1f24;         /* Dunkles Hintergrundfeld */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);  /* dezenter "Blueprint"-Glanz */
+
+  /* "technischer" Stil */
+  font-family: 'Courier New', monospace;  /* Technik-Schrift */
+  position: relative;
 }
+
+/* Optional: Titelbalken (simuliert wie ein Label auf dem Rahmen) */
+#bildAnzeige::before {
+  content: "FAHRZEUGBILD";
+  position: absolute;
+  top: -1.2rem;
+  left: 0.5rem;
+  background-color: #0d1117;
+  color: #00ffff;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border: 1px solid #00ffff;
+  font-family: 'Courier New', monospace;
+}
+
 
 	  
   </style>
