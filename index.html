@@ -95,19 +95,6 @@
   position: relative;
 }
 
-/* Optional: Titelbalken (simuliert wie ein Label auf dem Rahmen) */
-#bildAnzeige::before {
-  content: "FAHRZEUGBILD";
-  position: absolute;
-  top: -1.2rem;
-  left: 0.5rem;
-  background-color: #0d1117;
-  color: #00ffff;
-  font-size: 0.75rem;
-  padding: 2px 6px;
-  border: 1px solid #00ffff;
-  font-family: 'Courier New', monospace;
-}
 
 
 	  
@@ -139,7 +126,7 @@
 </div>	
 <div class="ausgabe-wrapper">
   <pre id="ausgabe"></pre>
-  <img id="bildAnzeige" style="max-width: 400px; display: none; margin-top: 1rem;" />
+  <img id="bildAnzeige" />
 </div>
 
   
