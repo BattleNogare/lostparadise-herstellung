@@ -5,92 +5,114 @@
   <title>Crafting-System - Lostparadise.eu</title>
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/favicon-96x96.png" />
   <style>
+    :root{
+      --bg:#0d1117;
+      --panel:#151b23;
+      --ink:#f0f0f0;
+      --muted:#97a3b6;
+      --border:#666;
+      --accent:#ffd700;
+      --panel-2:#2e2e2e;
+    }
+    *{box-sizing:border-box}
     body {
-      font-family: Arial;
+      font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       margin: 2rem;
-      background-color: #0d1117;
-      color: #f0f0f0;
+      background-color: var(--bg);
+      color: var(--ink);
       background-image: url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-Crafting2.png');
       background-size: contain;
       background-position: center center;
       background-repeat: no-repeat;
       background-attachment: fixed;
     }
-
     select, pre {
       font-size: 1rem;
-      padding: 0.5rem;
+      padding: 0.6rem 0.75rem;
       width: 47%;
-      background-color: #151b23;
+      background-color: var(--panel);
       color: #ffffff;
-      border: 1px solid #666;
+      border: 1px solid var(--border);
       margin-bottom: 1rem;
+      border-radius: 8px;
     }
-
+    select:focus{
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     pre {
-      background: #2e2e2e;
-      padding: 1rem;
+      background: var(--panel-2);
+      padding: 1rem 1.25rem;
       white-space: pre-wrap;
-      border: 1px solid #666;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      line-height: 1.45;
+      position: relative;
     }
-
+    .pre-title{
+      position:absolute;
+      top:-0.7rem; left:1rem;
+      background: var(--panel);
+      padding: 0.1rem 0.5rem;
+      border:1px solid var(--border);
+      border-radius: 6px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      letter-spacing: .02em;
+    }
     .kopfzeile {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
-
-    .kopfzeile img {
-      max-height: 80px;
-    }
-
+    .kopfzeile img { max-height: 80px; }
     .hinweis-box {
-      background-color: #2e2e2e;
-      color: #ffd700;
+      background-color: var(--panel-2);
+      color: var(--accent);
       padding: 1rem;
-      border-left: 5px solid #ffd700;
+      border-left: 5px solid var(--accent);
       margin: 1rem 0;
       width: 47%;
+      border-radius: 6px;
     }
-
     .link-button {
       display: inline-block;
       padding: 0.6rem 1rem;
-      background-color: #151b23;
-      color: #ffd700;
+      background-color: var(--panel);
+      color: var(--accent);
       text-decoration: none;
-      border: 1px solid #666;
-      border-radius: 5px;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: background-color 0.2s ease, color 0.2s ease, transform .05s ease;
     }
-
-    .link-button:hover {
-      background-color: #ffd700;
-      color: #151b23;
-    }
-
+    .link-button:hover { background-color: var(--accent); color: var(--panel); }
+    .link-button:active { transform: translateY(1px); }
     .ausgabe-wrapper {
       display: flex;
       gap: 2rem;
       align-items: flex-start;
       margin-top: 1rem;
+      flex-wrap: wrap;
     }
-
-    .ausgabe-wrapper pre {
-      width: 47%;
-    }
-
+    .ausgabe-wrapper pre { width: 47%; min-height: 280px; }
     #bildAnzeige {
       max-width: 40%;
       display: none;
       border: 3px double #ccc;
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 6px;
       background-color: #1b1f24;
       box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
       font-family: 'Courier New', monospace;
       position: relative;
     }
+    @media (max-width: 1100px){
+      select, .hinweis-box, .ausgabe-wrapper pre { width: 100%; }
+      #bildAnzeige{ max-width: 100%; }
+    }
+    .dim { color: var(--muted); }
+    .sep { border-bottom:1px dashed #555; margin:.4rem 0 .6rem; }
   </style>
 </head>
 <body>
@@ -122,7 +144,7 @@
   </div>
 
   <div class="ausgabe-wrapper">
-    <pre id="ausgabe"></pre>
+    <pre id="ausgabe"><span class="pre-title">Ausgabe</span></pre>
     <img id="bildAnzeige" style="display: none; margin-top: 1rem;" />
   </div>
 
@@ -298,8 +320,8 @@
     };
 
     const startSelect = document.getElementById("startSelect");
-    const endSelect = document.getElementById("endSelect");
-    const ausgabe = document.getElementById("ausgabe");
+    const endSelect   = document.getElementById("endSelect");
+    const ausgabe     = document.getElementById("ausgabe");
 
     const erlaubteItems = Object.keys(rezepte).filter(k => k.startsWith("craft_"));
     erlaubteItems.forEach(key => {
@@ -314,7 +336,7 @@
 
     function updateAnzeige() {
       const start = startSelect.value;
-      const ziel = endSelect.value;
+      const ziel  = endSelect.value;
 
       if (!ziel) {
         ausgabe.textContent = "❗ Bitte ein Zielprodukt auswählen.";
@@ -338,19 +360,16 @@
 
       const geplanteHerstellungen = new Set(pfad.slice(startIndex));
 
-      // Rohstoffsammler: löst NUR bis zu Nicht-Craft-Items auf oder Craft1_* (wie bei dir),
-      // überspringt aber geplante Pfad-Craft-Items.
+      // Rohstoff-Sammlung (nur bis Nicht-Craft bzw. craft1_* etc.; Pfad-Crafts werden übersprungen)
       function sammleMaterialien(item, menge = 1) {
         const rezept = rezepte[item];
         if (!rezept) return;
 
         rezept.itemsRequired.forEach(([roh, m]) => {
           const total = m * menge;
-
           if (rezepte[roh]) {
             if (bereitsVorhanden.has(roh)) return;
-            if (geplanteHerstellungen.has(roh)) return; // Pfad-Stufen NICHT als Material zählen
-            // Nicht im Pfad? Dann weiter herunterbrechen
+            if (geplanteHerstellungen.has(roh)) return; // Pfad-Stufe als Material nicht auflösen
             sammleMaterialien(roh, total);
             if (!verwendetInMap[roh]) verwendetInMap[roh] = new Set();
             verwendetInMap[roh].add(item);
@@ -362,8 +381,6 @@
           }
         });
       }
-
-      // Für JEDES Pfad-Item genau 1x Rohstoffe sammeln
       for (let i = startIndex; i < pfad.length; i++) sammleMaterialien(pfad[i], 1);
 
       let rohstoffText = "📦 Rohstoffliste:\n";
@@ -373,20 +390,20 @@
         const name = anzeigeNamen[key] || key;
         const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
         const preis = rohstoffPreise[key] || 0;
-        const kosten = preis * eintrag.menge;
+        const kosten = Math.round(preis * eintrag.menge);
         gesamt += kosten;
-
         rohstoffText += `- ${eintrag.menge}x ${name}${ort} ${preis} €/St = ${kosten} €\n`;
         for (const verwendung in eintrag.verwendetIn) {
           rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
         }
       }
 
-      const herstellungAggregiert = baueAggregiertenHerstellplan(pfad, startIndex, bereitsVorhanden);
+      // 🔧 Neuer: vollständige Prozess-Reihenfolge (Topologie) inkl. Zwischen-Crafts (ohne Doppelzählung der Pfadstufen)
+      const herstellungAggregiert = baueAggregiertenHerstellplanV2(pfad, startIndex, bereitsVorhanden);
 
       ausgabe.textContent =
-        `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n\n` +
-        rohstoffText +
+        `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n` +
+        `\n${rohstoffText}` +
         `\n💰 Gesamtkosten: ${gesamt} €\n` +
         herstellungAggregiert;
 
@@ -400,33 +417,101 @@
       }
     }
 
-    /* *** FIX (einfacher Plan, keine Doppelzählung) ***
-       - Keine Rekursion/Toposort mehr.
-       - Zeige jede Pfadstufe GENAU 1x an.
-       - Bei den Unterpunkten die Requirements anzeigen, ABER:
-         * Craft-Items, die selbst im Pfad liegen (oder bereits vorhanden sind), werden NICHT als Unterpunkt wiederholt.
-    */
-    function baueAggregiertenHerstellplan(pfad, startIndex = 0, bereitsVorhandenSet = new Set()) {
+    /* ░░░ Topologischer Herstellplan mit Zwischen-Crafts, ohne Pfad-Doppelzählung ░░░ */
+    function baueAggregiertenHerstellplanV2(pfad, startIndex = 0, bereitsVorhandenSet = new Set()) {
       const teilPfad = pfad.slice(startIndex);
-      const planned = new Set(teilPfad);
+      const planned  = new Set(teilPfad);
 
-      let herstellungText = "\n🔧 Herstellprozesse:\n";
-      for (const item of teilPfad) {
-        const name = anzeigeNamen[item] || item;
-        herstellungText += `- 1x ${name}\n`;
+      // Mengen für NICHT-PFAD-Crafts
+      const qty = {};               // { craftItem: gesamtMenge }
+      const edges = {};             // dep -> [items die dep benötigen]
+      const nodes = new Set();      // alle Craft-Nodes, die im Plan auftauchen
 
+      function addEdge(dep, to){
+        if (!edges[dep]) edges[dep] = new Set();
+        edges[dep].add(to);
+      }
+
+      function accumulate(item, mult = 1) {
         const rezept = rezepte[item];
-        if (!rezept) continue;
+        if (!rezept) return;
 
-        for (const [roh, m] of rezept.itemsRequired) {
-          // Craft-Stufen, die im Pfad liegen (oder bereits vorhanden sind), NICHT erneut aufführen
-          if (rezepte[roh] && (planned.has(roh) || bereitsVorhandenSet.has(roh))) continue;
+        for (const [dep, m] of rezept.itemsRequired) {
+          if (!rezepte[dep]) continue; // nur Craft-Knoten für Graph
+          addEdge(dep, item);
+          nodes.add(dep); nodes.add(item);
 
-          const rName = anzeigeNamen[roh] || roh;
-          herstellungText += `    ⤷ ${m}x ${rName}\n`;
+          const need = m * mult;
+          if (planned.has(dep) || bereitsVorhandenSet.has(dep)) {
+            // Pfad- oder bereits vorhandene Stufe: NICHT zur Menge addieren, Abhängigkeit nur für Reihenfolge
+            continue;
+          } else {
+            qty[dep] = (qty[dep] || 0) + need;
+            accumulate(dep, need);
+          }
         }
       }
-      return herstellungText;
+
+      // Starte von den geplanten Stufen (jede 1x)
+      for (const it of teilPfad) {
+        nodes.add(it);
+        accumulate(it, 1);
+      }
+      // auch non-planned, die nur als dep vorkamen
+      for (const k of Object.keys(qty)) nodes.add(k);
+
+      // Topologisches Sortieren der beteiligten Nodes
+      // Kanten: dep -> item (dep muss vor item)
+      // Wir berücksichtigen nur Nodes aus 'nodes'
+      const indeg = {};
+      for (const n of nodes) indeg[n] = 0;
+      for (const d in edges) {
+        for (const t of edges[d]) {
+          if (nodes.has(t)) indeg[t] = (indeg[t] || 0) + 1;
+        }
+      }
+      const queue = [];
+      for (const n of nodes) if ((indeg[n]||0) === 0) queue.push(n);
+
+      const topo = [];
+      while (queue.length) {
+        const n = queue.shift();
+        topo.push(n);
+        if (edges[n]) {
+          for (const t of edges[n]) {
+            if (!nodes.has(t)) continue;
+            indeg[t]--;
+            if (indeg[t] === 0) queue.push(t);
+          }
+        }
+      }
+
+      // Fallback: falls Zyklus (sollte nicht sein), nutze zumindest Pfad-Reihenfolge
+      const setTopo = new Set(topo);
+      for (const p of teilPfad) if (!setTopo.has(p)) topo.push(p);
+
+      // Ausgabe bauen
+      let out = "\n🔧 Herstellprozesse (Abarbeitungsreihenfolge):\n";
+      for (const item of topo) {
+        const isPlanned = planned.has(item);
+        const amount = isPlanned ? 1 : (qty[item] || 0);
+        if (amount <= 0) continue; // nur relevante non-planned + alle planned
+
+        const name = anzeigeNamen[item] || item;
+        out += `- ${amount}x ${name}\n`;
+
+        // direkte Anforderungen des Items (inkl. Rohstoffe & ggf. Pfad-Dependencies)
+        const r = rezepte[item];
+        if (!r) continue;
+        for (const [dep, m] of r.itemsRequired) {
+          const depName = anzeigeNamen[dep] || dep;
+          const need = m * amount;
+
+          // Für Anzeige: zeige ALLE direkten Anforderungen (auch Pfad-Stufen), damit der Spieler die Schritte sieht.
+          out += `    ⤷ ${need}x ${depName}\n`;
+        }
+      }
+      return out;
     }
 
     function findeRezeptPfad(start, ziel) {
@@ -450,7 +535,6 @@
           return pfad;
         }
       }
-
       return start ? null : pfad;
     }
 
