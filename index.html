@@ -3,1571 +3,336 @@
 <head>
   <meta charset="UTF-8" />
   <title>Crafting-System - Lostparadise.eu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/favicon-96x96.png" />
   <style>
-    :root{
-      --bg:#0d1117;
-      --panel:#151b23;
-      --ink:#f0f0f0;
-      --muted:#97a3b6;
-      --border:#666;
-      --accent:#ffd700;
-      --panel-2:#2e2e2e;
+    :root{--bg:#0d1117;--panel:#151b23;--ink:#f0f0f0;--muted:#97a3b6;--border:#666;--accent:#ffd700;--panel-2:#2e2e2e;}
+    body{font-family:Arial,system-ui;margin:2rem;background:var(--bg);color:var(--ink);
+      background-image:url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-Crafting2.png');
+      background-size:contain;background-repeat:no-repeat;background-position:center;background-attachment:fixed;}
+    .kopfzeile{display:flex;align-items:center;gap:1rem;}
+    .kopfzeile img{height:80px;width:auto;object-fit:contain;}
+    .controls{display:flex;gap:1rem;align-items:flex-end;margin:.5rem 0 1rem;flex-wrap:wrap;}
+    .controls select{flex:1 1 48%;max-width:48%;min-width:320px;font-size:1rem;padding:.6rem .75rem;background:var(--panel);color:#fff;border:1px solid var(--border);border-radius:8px;}
+    .controls select:focus{outline:2px solid var(--accent);outline-offset:2px;}
+    .hinweis-box{background:var(--panel-2);color:var(--accent);padding:1rem;border-left:5px solid var(--accent);margin:0 0 1rem;width:100%;border-radius:6px;white-space:pre-wrap;}
+    .error-box{color:#ff9aa2;}
+    .ausgabe-wrapper{display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;margin-top:0;}
+    .ausgabe-wrapper>*{margin-top:0;}
+    .col{flex:1 1 48%;max-width:48%;min-width:320px;}
+    pre{background:var(--panel-2);padding:1rem 1.25rem;white-space:pre-wrap;border:1px solid var(--border);border-radius:10px;line-height:1.45;min-height:280px;font-family:ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;}
+    #bilderContainer img{display:block;max-width:100%;height:auto;margin-bottom:1rem;border:3px double #ccc;border-radius:8px;background:#1b1f24;box-shadow:0 0 10px rgba(0,255,255,.2);object-fit:contain;}
+    @media (max-width:1100px){
+      .controls select{flex-basis:100%;max-width:100%;min-width:0;}
+      .hinweis-box{width:100%;}
+      .col{flex-basis:100%;max-width:100%;min-width:0;}
     }
-    *{box-sizing:border-box}
-    body {
-      font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      margin: 2rem;
-      background-color: var(--bg);
-      color: var(--ink);
-      background-image: url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-Crafting2.png');
-      background-size: contain;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-    }
-    select, pre {
-      font-size: 1rem;
-      padding: 0.6rem 0.75rem;
-      width: 47%;
-      background-color: var(--panel);
-      color: #ffffff;
-      border: 1px solid var(--border);
-      margin-bottom: 1rem;
-      border-radius: 8px;
-    }
-    select:focus{
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-    pre {
-      background: var(--panel-2);
-      padding: 1rem 1.25rem;
-      white-space: pre-wrap;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-      line-height: 1.45;
-      position: relative;
-    }
-    .pre-title{
-      position:absolute;
-      top:-0.7rem; left:1rem;
-      background: var(--panel);
-      padding: 0.1rem 0.5rem;
-      border:1px solid var(--border);
-      border-radius: 6px;
-      color: var(--accent);
-      font-size: 0.8rem;
-      letter-spacing: .02em;
-    }
-    .kopfzeile {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .kopfzeile img { max-height: 80px; }
-    .hinweis-box {
-      background-color: var(--panel-2);
-      color: var(--accent);
-      padding: 1rem;
-      border-left: 5px solid var(--accent);
-      margin: 1rem 0;
-      width: 47%;
-      border-radius: 6px;
-    }
-    .link-button {
-      display: inline-block;
-      padding: 0.6rem 1rem;
-      background-color: var(--panel);
-      color: var(--accent);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      transition: background-color 0.2s ease, color 0.2s ease, transform .05s ease;
-    }
-    .link-button:hover { background-color: var(--accent); color: var(--panel); }
-    .link-button:active { transform: translateY(1px); }
-    .ausgabe-wrapper {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-    .ausgabe-wrapper pre { width: 47%; min-height: 280px; }
-    #bildAnzeige {
-      max-width: 40%;
-      display: none;
-      border: 3px double #ccc;
-      border-radius: 8px;
-      padding: 6px;
-      background-color: #1b1f24;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-      font-family: 'Courier New', monospace;
-      position: relative;
-    }
-    @media (max-width: 1100px){
-      select, .hinweis-box, .ausgabe-wrapper pre { width: 100%; }
-      #bildAnzeige{ max-width: 100%; }
-    }
-    .dim { color: var(--muted); }
-    .sep { border-bottom:1px dashed #555; margin:.4rem 0 .6rem; }
   </style>
 </head>
 <body>
   <div class="kopfzeile">
-    <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/8c16ed8a0e0b9f02aaaca93c4970dc576722484c/Lostparadise-Crafting2.png" width="100" />
+    <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/8c16ed8a0e0b9f02aaaca93c4970dc576722484c/Lostparadise-Crafting2.png" alt="Lostparadise Logo" />
     <h1>Lostparadise.eu - Fahrzeug - Crafting-System</h1>
   </div>
 
-  <br>
-    <a href="waffen-crafting.html" class="link-button">Zum Waffen-Crafting</a>
-  </br>
+  <p><a href="waffen-crafting.html" style="color:var(--accent)">Zum Waffen-Crafting</a></p>
 
-  <br>
-    <select id="startSelect">
-      <option value="">-- Optional: Startprodukt --</option>
-    </select>
-
-    <select id="endSelect">
-      <option value="">-- Zielprodukt auswählen --</option>
-    </select>
-  </br>
-
-  <div class="hinweis-box">
-    💡 Hinweis! <br>
-    Die Werte sind berechnet und nicht garantiert! Bei Fehlern ➔ Marius Braun<br>
-    Verwendung auf eigene Gefahr<br>
+  <div class="controls">
+    <select id="startSelect" disabled><option value="">-- Optional: Startprodukt --</option></select>
+    <select id="endSelect" disabled><option value="">-- Zielprodukt auswählen --</option></select>
   </div>
+
+  <div class="hinweis-box" id="hintBox">🔄 Lade Daten aus Google Sheets …</div>
 
   <div class="ausgabe-wrapper">
-    <pre id="ausgabe"><span class="pre-title">Ausgabe</span></pre>
-    <img id="bildAnzeige" style="display: none; margin-top: 1rem;" />
+    <div class="col"><pre id="ausgabe">Bitte Zielprodukt auswählen.</pre></div>
+    <div class="col" id="bilderContainer"></div>
   </div>
 
-  <script>
-    const rezepte = {
-  "craft_1": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_corvetteC2_63_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_1", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 2],
-      ["stoff", 50],
-      ["schwer_stoff", 25],
-    ],
-  },
-  "craft_2": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_corvetteC2_63_L_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_1", 1],
-      ["schem_2", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 2],
-      ["craft1_getriebe", 8],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 2],
-      ["stoff", 25],
-      ["schwer_stoff", 10],
-    ],
-  },
-  "craft_3": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_teslaX_16_85_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_3", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 2],
-      ["craft1_batterie", 5],
-      ["craft1_elektrik", 2],
-      ["craft1_elektronik", 3],
-      ["stoff", 50],
-      ["schwer_stoff", 25],
-    ],
-  },
-  "craft_4": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_cyberTruck_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_4", 1],
-      ["craft1_karrosserie", 6],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 2],
-      ["craft1_batterie", 10],
-      ["craft1_elektrik", 4],
-      ["craft1_elektronik", 5],
-      ["stoff", 150],
-      ["schwer_stoff", 55],
-    ],
-  },
-  "craft_5": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_cyberTruck_B_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_4", 1],
-      ["schem_5", 1],
-      ["craft1_karrosserie", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 4],
-      ["craft1_batterie", 8],
-      ["craft1_elektrik", 6],
-      ["craft1_elektronik", 6],
-      ["stoff", 75],
-      ["schwer_stoff", 25],
-    ],
-  },
-  "craft_6": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_javelin_72_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_6", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 3],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 4],
-      ["stoff", 75],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_7": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_QUA_Regalia_23_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_7", 1],
-      ["craft1_karrosserie", 8],
-      ["craft1_motor", 6],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 10],
-      ["craft1_elektronik", 8],
-      ["stoff", 75],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_8": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_QUA_Regalia_23_D_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_7", 1],
-      ["schem_8", 1],
-      ["craft1_karrosserie", 15],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 2],
-      ["craft1_getriebe", 8],
-      ["craft1_batterie", 4],
-      ["craft1_elektrik", 15],
-      ["craft1_elektronik", 10],
-      ["stoff", 150],
-      ["schwer_stoff", 25],
-    ],
-  },
-  "craft_9": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_ztype_gtaV_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_9", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 4],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 2],
-      ["stoff", 50],
-      ["schwer_stoff", 20],
-    ],
-  },
-  "craft_10": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_ztype_gtaV_S_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_9", 1],
-      ["schem_10", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 2],
-      ["stoff", 50],
-      ["schwer_stoff", 20],
-    ],
-  },
-  "craft_11": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_hotknife_gtaV_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_11", 1],
-      ["craft1_karrosserie", 2],
-      ["craft1_motor", 1],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 2],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 2],
-      ["stoff", 40],
-      ["schwer_stoff", 10],
-    ],
-  },
-  "craft_12": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_hotknife_gtaV_2_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_11", 1],
-      ["schem_12", 1],
-      ["craft1_karrosserie", 2],
-      ["craft1_motor", 3],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 4],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 3],
-      ["stoff", 40],
-      ["schwer_stoff", 10],
-    ],
-  },
-  "craft_13": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_Monobike_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_13", 1],
-      ["craft1_karrosserie", 1],
-      ["craft1_motor", 1],
-      ["craft1_reifen", 1],
-      ["craft1_getriebe", 1],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 1],
-      ["stoff", 10],
-      ["schwer_stoff", 5],
-    ],
-  },
-  "craft_14": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_velociraptor_18_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_14", 1],
-      ["craft1_karrosserie", 10],
-      ["craft1_motor", 5],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 5],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 8],
-      ["craft1_elektronik", 6],
-      ["stoff", 80],
-      ["schwer_stoff", 40],
-    ],
-  },
-  "craft_15": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_coronet_70_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_15", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 5],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 3],
-      ["stoff", 75],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_16": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_hornet_52_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_15", 1],
-      ["schem_16", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 4],
-      ["stoff", 80],
-      ["schwer_stoff", 20],
-    ],
-  },
-  "craft_17": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_eldorado_68_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_17", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 4],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 2],
-      ["stoff", 40],
-      ["schwer_stoff", 20],
-    ],
-  },
-  "craft_18": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_vipersrt10acr_08_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_18", 1],
-      ["craft1_karrosserie", 6],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 8],
-      ["craft1_batterie", 1],
-      ["craft1_elektrik", 4],
-      ["stoff", 150],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_19": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_vipersrt10acr_08_S_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_18", 1],
-      ["schem_19", 1],
-      ["craft1_karrosserie", 8],
-      ["craft1_motor", 6],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 10],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 8],
-      ["craft1_elektronik", 2],
-      ["stoff", 150],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_20": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_ST2_LP_BASE.png",
-    itemsRequired: [
-      ["craft_24", 1],
-      ["schem_20", 1],
-      ["craft1_karrosserie", 20],
-      ["craft1_motor", 10],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 20],
-      ["craft1_batterie", 4],
-      ["craft1_elektrik", 20],
-      ["craft1_elektronik", 12],
-      ["stoff", 250],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_21": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_ST3_LP_BASE.png",
-    itemsRequired: [
-      ["craft_20", 1],
-      ["schem_21", 1],
-      ["craft1_karrosserie", 25],
-      ["craft1_motor", 12],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 25],
-      ["craft1_batterie", 6],
-      ["craft1_elektrik", 25],
-      ["craft1_elektronik", 14],
-      ["stoff", 300],
-      ["schwer_stoff", 150],
-    ],
-  },
-  "craft_22": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_ST4_LP_BASE.png",
-    itemsRequired: [
-      ["craft_21", 1],
-      ["schem_22", 1],
-      ["craft1_karrosserie", 30],
-      ["craft1_motor", 15],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 30],
-      ["craft1_batterie", 8],
-      ["craft1_elektrik", 35],
-      ["craft1_elektronik", 18],
-      ["stoff", 400],
-      ["schwer_stoff", 200],
-    ],
-  },
-  "craft_23": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_brickade2_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_22", 1],
-      ["craft_25", 1],
-      ["schem_23", 1],
-      ["craft1_karrosserie", 50],
-      ["craft1_motor", 40],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 55],
-      ["craft1_batterie", 16],
-      ["craft1_elektrik", 40],
-      ["craft1_elektronik", 25],
-      ["stoff", 800],
-      ["schwer_stoff", 600],
-    ],
-  },
-  "craft_26": {
-    wert: 0,
-    dauer: 120,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_donkervoort_17_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_26", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 3],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 5],
-      ["stoff", 45],
-      ["schwer_stoff", 15],
-    ],
-  },
-  "craft_27": {
-    wert: 0,
-    dauer: 120,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_donkervoort_17_BNC_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_26", 1],
-      ["schem_27", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 5],
-      ["craft1_batterie", 3],
-      ["craft1_elektrik", 6],
-      ["stoff", 50],
-      ["schwer_stoff", 20],
-    ],
-  },
-  "craft_28": {
-    wert: 0,
-    dauer: 120,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/V12_STRALIS2_EV_ST1_LP_BASE.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_28", 1],
-      ["craft1_karrosserie", 10],
-      ["craft1_motor", 1],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 1],
-      ["craft1_batterie", 45],
-      ["craft1_elektrik", 15],
-      ["craft1_elektronik", 25],
-      ["stoff", 150],
-      ["schwer_stoff", 50],
-    ],
-  },
-  "craft_29": {
-    wert: 0,
-    dauer: 120,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/V12_STRALIS2_EV_ST2_LP_BASE.png",
-    itemsRequired: [
-      ["craft_28", 1],
-      ["schem_29", 1],
-      ["craft1_karrosserie", 5],
-      ["craft1_motor", 2],
-      ["craft1_getriebe", 1],
-      ["craft1_batterie", 35],
-      ["craft1_elektrik", 25],
-      ["craft1_elektronik", 20],
-      ["stoff", 100],
-      ["schwer_stoff", 80],
-    ],
-  },
-  "craft_30": {
-    wert: 0,
-    dauer: 120,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/V12_STRALIS2_EV_ST3_LP_BASE.png",
-    itemsRequired: [
-      ["craft_29", 1],
-      ["schem_30", 1],
-      ["craft1_karrosserie", 10],
-      ["craft1_motor", 2],
-      ["craft1_getriebe", 1],
-      ["craft1_batterie", 25],
-      ["craft1_elektrik", 20],
-      ["craft1_elektronik", 30],
-      ["stoff", 200],
-      ["schwer_stoff", 100],
-    ],
-  },
-  
-  
-  "craft_31": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_device_LP_BASE.png",
-    itemsRequired: [
-      ["craft_22", 1],
-      ["schem_31", 1],
-      ["craft1_karrosserie", 75],
-      ["craft1_motor", 45],
-      ["craft1_intelligent", 5],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 60],
-      ["craft1_batterie", 15],
-      ["craft1_elektrik", 70],
-      ["craft1_elektronik", 50],
-      ["craft1_reinforced_alloy", 60],
-      ["craft1_highspeed", 35],
-      ["stoff", 400],
-      ["schwer_stoff", 400],
-    ],
-  },
+<script>
+/* ========= Konfig ========= */
+const SHEET_ID = "1ObAKUBNv5IjXEyY0TD85gK9dJhlm8Uq7Qj6QZgHkoZg";
+const TAB_RECIPES = "recipes";
+const TAB_ITEMS   = "recipe_items";
+const TAB_TRANSL  = "translate";
+const TAB_PRICES  = "prices";
+const DEFAULT_BUCKETS = [1];
 
-  "craft_32": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_Streamside_AR8_LP_CRAFT.png",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_32", 1],
-      ["craft1_karrosserie", 3],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 5],
-      ["craft1_batterie", 1],
-      ["craft1_reinforced_alloy", 2],
-      ["craft1_elektrik", 3],
-      ["stoff", 20],
-      ["schwer_stoff", 10],
-    ],
-  },
+/* ========= State ========= */
+const startSelect=document.getElementById("startSelect");
+const endSelect  =document.getElementById("endSelect");
+const ausgabe    =document.getElementById("ausgabe");
+const hintBox    =document.getElementById("hintBox");
+const bilderContainer=document.getElementById("bilderContainer");
 
-  "craft_33": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_t50_LP_BASE.png",
-    itemsRequired: [
-      ["craft_35", 1],
-      ["schem_33", 1],
-      ["craft1_karrosserie", 35],
-      ["craft1_motor", 15],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 30],
-      ["craft1_batterie", 8],
-      ["craft1_elektrik", 30],
-      ["craft1_reinforced_alloy", 10],
-      ["craft1_elektronik", 15],
-      ["craft1_highspeed", 5],
-      ["stoff", 250],
-      ["schwer_stoff", 150],
-    ],
-  },
+const rezepte={}, baseNames={}, translateMap={}, displayNameCache=new Map();
+const reverseEdges={}, baseItemKeys=new Set(), rohstoffPreise={};
+let allowedBuckets=new Set(DEFAULT_BUCKETS), allDropdownCandidates=[];
 
-  "craft_34": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_t75_LP_BASE.png",
-    itemsRequired: [
-      ["craft_33", 1],
-      ["schem_34", 1],
-      ["craft1_karrosserie", 50],
-      ["craft1_motor", 20],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 40],
-      ["craft1_batterie", 10],
-      ["craft1_elektrik", 45],
-      ["craft1_reinforced_alloy", 15],
-      ["craft1_elektronik", 20],
-      ["craft1_intelligent", 2],
-      ["craft1_highspeed", 10],
-      ["stoff", 200],
-      ["schwer_stoff", 100],
-    ],
-  },
-
-  "craft_36": {
-    wert: 0,
-    dauer: 3720,
-    picture: "https://lostparadise.eu/controlpanel/public/objects/d3s_scania_16_t100_LP_BASE.png",
-    itemsRequired: [
-      ["craft_34", 1],
-      ["schem_36", 1],
-      ["craft1_karrosserie", 100],
-      ["craft1_motor", 40],
-      ["craft1_reifen", 6],
-      ["craft1_getriebe", 55],
-      ["craft1_batterie", 25],
-      ["craft1_elektrik", 80],
-      ["craft1_reinforced_alloy", 35],
-      ["craft1_elektronik", 40],
-      ["craft1_intelligent", 10],
-      ["craft1_highspeed", 30],
-      ["stoff", 250],
-      ["schwer_stoff", 200],
-    ],
-  },
-	"craft_38": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_37", 1],
-      ["schem_38", 1],
-      ["craft1_karrosserie", 5],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 7],
-      ["craft1_batterie", 4],
-      ["craft1_elektrik", 5],
-      ["craft1_elektronik", 2],
-      ["craft1_highspeed", 2],
-      ["craft1_reinforced_alloy", 2],
-      ["stoff", 50],
-      ["schwer_stoff", 25]
-    ]
-  },
-
-  "craft_39": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["schem_39", 1],
-      ["craft1_karrosserie", 8],
-      ["craft1_motor", 6],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 10],
-      ["craft1_batterie", 6],
-      ["craft1_elektrik", 10],
-      ["craft1_elektronik", 4],
-      ["craft1_highspeed", 1],
-      ["craft1_reinforced_alloy", 2],
-      ["stoff", 25],
-      ["schwer_stoff", 75]
-    ]
-  },
-
-  "craft_40": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_40", 1],
-      ["craft1_karrosserie", 6],
-      ["craft1_motor", 3],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 5],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 1],
-      ["stoff", 35],
-      ["schwer_stoff", 35]
-    ]
-  },
-
-  "craft_41": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_41", 1],
-      ["craft1_karrosserie", 4],
-      ["craft1_motor", 2],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 2],
-      ["craft1_batterie", 2],
-      ["craft1_elektrik", 1],
-      ["stoff", 25],
-      ["schwer_stoff", 10]
-    ]
-  },
-
-  "craft_42": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_41", 1],
-      ["schem_42", 1],
-      ["craft1_karrosserie", 8],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 6],
-      ["craft1_batterie", 3],
-      ["craft1_elektrik", 3],
-      ["stoff", 55],
-      ["schwer_stoff", 35]
-    ]
-  },
-
-  "craft_43": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_43", 1],
-      ["craft1_karrosserie", 10],
-      ["craft1_motor", 8],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 8],
-      ["craft1_batterie", 4],
-      ["craft1_elektrik", 3],
-      ["craft1_reinforced_alloy", 5],
-      ["stoff", 85],
-      ["schwer_stoff", 55]
-    ]
-  },
-
-  "craft_44": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_44", 1],
-      ["craft1_karrosserie", 15],
-      ["craft1_motor", 8],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 10],
-      ["craft1_batterie", 2],
-      ["goldBarren", 100],
-      ["craft1_reinforced_alloy", 10],
-      ["stoff", 85],
-      ["schwer_stoff", 55]
-    ]
-  },
-
-  "craft_45": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_45", 1],
-      ["craft1_karrosserie", 15],
-      ["craft1_motor", 4],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 8],
-      ["craft1_batterie", 4],
-      ["craft1_elektrik", 3],
-      ["stoff", 100],
-      ["schwer_stoff", 75]
-    ]
-  },
-
-  "craft_47": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_47", 1],
-      ["craft1_karrosserie", 25],
-      ["craft1_motor", 8],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 10],
-      ["craft1_batterie", 6],
-      ["craft1_elektrik", 10],
-      ["craft1_elektronik", 2],
-      ["stoff", 300],
-      ["schwer_stoff", 300]
-    ]
-  },
-
-  "craft_48": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_48", 1],
-      ["craft1_karrosserie", 40],
-      ["craft1_motor", 12],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 14],
-      ["craft1_batterie", 8],
-      ["craft1_elektrik", 12],
-      ["craft1_elektronik", 2],
-      ["stoff", 250],
-      ["schwer_stoff", 450]
-    ]
-  },
-
-  "craft_46": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_46", 1],
-      ["craft1_karrosserie", 30],
-      ["craft1_motor", 12],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 12],
-      ["craft1_batterie", 12],
-      ["craft1_elektrik", 8],
-      ["craft1_elektronik", 15],
-      ["stoff", 250],
-      ["schwer_stoff", 450]
-    ]
-  },
-
-  "craft_49": {
-    wert: 0,
-    dauer: 0,
-    picture: "",
-    itemsRequired: [
-      ["craft_blanko", 1],
-      ["schem_49", 1],
-      ["craft1_karrosserie", 60],
-      ["craft1_motor", 15],
-      ["craft1_reifen", 4],
-      ["craft1_getriebe", 16],
-      ["craft1_batterie", 10],
-      ["craft1_elektrik", 15],
-      ["craft1_elektronik", 8],
-      ["stoff", 500],
-      ["schwer_stoff", 500]
-    ]
-  },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-  "craft1_karrosserie": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["aluPlatte", 50],
-      ["stahlPlatte", 10],
-      ["eisenStange", 25],
-      ["kupferFolie", 15],
-      ["kupferDraht", 5],
-    ],
-  },
-  "craft1_motor": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["motoroil", 10],
-      ["aluBox", 3],
-      ["plastic", 35],
-      ["stahlBarren", 40],
-      ["kupferFolie", 20],
-    ],
-  },
-  "craft1_reifen": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["gummi", 40],
-      ["stahlBarren", 2],
-      ["aluBarren", 40],
-      ["plastic", 5],
-    ],
-  },
-  "craft1_carbon": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["aluPlatte", 20],
-      ["plastic", 10],
-      ["kohleStein", 5],
-      ["kohleBraun", 40],
-    ],
-  },
-  "craft1_elektrik": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["eisenStange", 10],
-      ["kupferFolie", 25],
-      ["kupferDraht", 40],
-      ["plastic", 35],
-      ["gummi", 15],
-      ["aluPlatte", 2],
-    ],
-  },
-  "craft1_batterie": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["aluBox", 10],
-      ["schwefelacid", 25],
-      ["plastic", 40],
-      ["gummi", 5],
-      ["craft1_elektrik", 5],
-    ],
-  },
-  "craft1_getriebe": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["stahlBarren", 10],
-      ["stahlPlatte", 25],
-      ["eisenStange", 40],
-      ["getriebeoil", 20],
-    ],
-  },
-  "craft1_elektronik": {
-    wert: 0,
-    dauer: 120,
-    itemsRequired: [
-      ["eisenStange", 15],
-      ["kupferFolie", 40],
-      ["kupferDraht", 60],
-      ["plastic", 50],
-      ["gummi", 20],
-      ["aluPlatte", 4],
-      ["craft1_elektrik", 3],
-      ["rubin", 5],
-    ],
-  },
-  "craft1_highspeed": {
-  wert: 0,
-  dauer: 120,
-  itemsRequired: [
-    ["goldBarren", 10],
-    ["aluBox", 3],
-    ["plastic", 35],
-    ["stahlBarren", 40],
-    ["kupferFolie", 20],
-  ],
-},
-
-"craft1_reinforced_alloy": {
-  wert: 0,
-  dauer: 120,
-  itemsRequired: [
-    ["aluPlatte", 75],
-    ["stahlBarren", 50],
-    ["kobaltBarren", 45],
-    ["kupferFolie", 60],
-    ["kohleStein", 25],
-  ],
-},
-
-"craft1_intelligent": {
-  wert: 0,
-  dauer: 120,
-  itemsRequired: [
-    ["craft1_elektrik", 10],
-    ["craft1_elektronik", 5],
-    ["craft1_batterie", 5],
-    ["aluBox", 5],
-    ["craft1_highspeed", 10],
-    ["schwefelacid", 5],
-  ],
-},
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-
-      "schwer_stoff": { wert: 0, dauer: 4.8, itemsRequired: [["stoff",1],["aluBarren",0.4]] },
-      "stoff": { wert: 0, dauer: 1.2, itemsRequired: [["cotton",2]] },
-      "kupferFolie": { wert: 0, dauer: 4.8, itemsRequired: [["kupferBarren",2]] },
-      "kupferDraht": { wert: 0, dauer: 4.8, itemsRequired: [["kupferBarren",1]] },
-      "kupferPulver": { wert: 0, dauer: 4.8, itemsRequired: [["kupferBarren",2]] },
-      "eisenPlatte": { wert: 0, dauer: 1.2, itemsRequired: [["eisenBarren",1]] },
-      "eisenStange": { wert: 0, dauer: 1.2, itemsRequired: [["eisenBarren",1]] },
-      "aluPlatte": { wert: 0, dauer: 1.2, itemsRequired: [["aluBarren",1]] },
-      "stahlPlatte": { wert: 0, dauer: 1.2, itemsRequired: [["stahlBarren",1]] },
-      "aluBox": { wert: 0, dauer: 1.2, itemsRequired: [["aluBarren",3]] },
-
-      "craft_Rucksack": { wert: 0, dauer: 1320, picture: "https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Rucksack.png",
-        itemsRequired: [["stoff",200],["schwer_stoff",100],["craft1_carbon",25],["plastic",15],["gummi",15]]
-      },
-
-      "Test": { wert: 1000000000, dauer: 0,
-        itemsRequired: [["craft_blanko",1],["schem_1",1],["craft1_karrosserie",4],["craft1_motor",2],["craft1_reifen",4],["craft1_getriebe",6],["craft1_batterie",1],["craft1_elektrik",2],["stoff",50],["schwer_stoff",25]]
-      },
+/* ========= Utils ========= */
+function normKey(v){
+  return String(v??"").normalize('NFKC')
+    .replace(/[\u00A0\u200B\t\n\r]+/g,"") // unsichtbare
+    .replace(/\s+/g," ")                  // doppelte Spaces
+    .trim()
+    .replace(/[;:]+$/,"")                 // störende Endzeichen
+    .toLowerCase();
+}
+function parseEuroNumber(v){
+  if(v==null) return NaN;
+  if(typeof v==="number" && isFinite(v)) return v;
+  let s=String(v).trim(); if(!s) return NaN;
+  s=s.replace(/[^\d.,-]/g,'');
+  if(!/[.,]/.test(s)) return Number(s);
+  const d=s.lastIndexOf('.'), c=s.lastIndexOf(',');
+  const decIsComma = c > d;
+  if(decIsComma){ s=s.replace(/\./g,''); const i=s.lastIndexOf(','); s=s.slice(0,i).replace(/,/g,'')+'.'+s.slice(i+1).replace(/,/g,''); }
+  else { s=s.replace(/,/g,''); }
+  const n=Number(s); return isFinite(n)?n:NaN;
+}
+function displayName(k){
+  if(!k) return "";
+  if(displayNameCache.has(k)) return displayNameCache.get(k);
+  const n=translateMap[k]||baseNames[k]||k;
+  displayNameCache.set(k,n);
+  return n;
+}
+function addReverseEdge(dep,prod){ if(!reverseEdges[dep]) reverseEdges[dep]=new Set(); reverseEdges[dep].add(prod); }
+function fillDropdown(sel,keys){
+  const prev=sel.value;
+  sel.innerHTML="";
+  const first=document.createElement("option");
+  first.value=""; first.textContent=(sel===startSelect)?"-- Optional: Startprodukt --":"-- Zielprodukt auswählen --";
+  sel.appendChild(first);
+  for(const k of keys){ const opt=document.createElement("option"); opt.value=k; opt.textContent=displayName(k); sel.appendChild(opt); }
+  if(prev && keys.includes(prev)) sel.value=prev;
+}
+function reachableFrom(startKey){
+  if(!startKey) return new Set(allDropdownCandidates);
+  const visited=new Set([startKey]), q=[startKey], res=new Set();
+  while(q.length){
+    const cur=q.shift();
+    const outs=reverseEdges[cur];
+    if(!outs) continue;
+    for(const prod of outs){ if(!visited.has(prod)){ visited.add(prod); q.push(prod); res.add(prod); } }
+  }
+  const filtered=new Set();
+  for(const k of allDropdownCandidates){ if(k!==startKey && res.has(k)) filtered.add(k); }
+  return filtered;
+}
+function gvizJSONP(sheetName, timeoutMs=15000){
+  return new Promise((resolve,reject)=>{
+    const cb="gvizCb_"+Math.random().toString(36).slice(2);
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json,responseHandler:${cb}&headers=1&sheet=${encodeURIComponent(sheetName)}`;
+    const script=document.createElement("script");
+    let to=setTimeout(()=>{cleanup();reject(new Error("Timeout "+sheetName));},timeoutMs);
+    function cleanup(){ clearTimeout(to); try{delete window[cb];}catch(_){} if(script.parentNode) script.parentNode.removeChild(script); }
+    window[cb]=p=>{
+      cleanup();
+      try{
+        const cols=p.table.cols.map(c=>(c.label||c.id||"").trim());
+        const rows=p.table.rows.map(r=>{const o={}; (r.c||[]).forEach((cell,i)=>o[cols[i]||("c"+i)]=cell?cell.v:""); return o;});
+        resolve(rows);
+      }catch(e){reject(e);}
     };
+    script.src=url; script.onerror=()=>{cleanup();reject(new Error("GViz error "+sheetName));};
+    document.head.appendChild(script);
+  });
+}
 
-    const anzeigeNamen = {
-      "craft_1":"Corvette C2",
-	  "craft_2":"Corvette C2 Stingray",
-	  "craft_3":"Tesla Model X",
-	  "craft_4":"Cybertruck",
-	  "craft_5":"Cyberbeast",
-      "craft_6":"AMC Javelin",
-	  "craft_7":"Quartz Regalia",
-	  "craft_8":"Quarz Regalia D-Type",
-	  "craft_9":"Truffade Z-Type",
-	  "craft_10":"Truffade Z-Type-R",
-      "craft_11":"Vapid Hotknife",
-	  "craft_12":"Vapid Hotknife RAW",
-	  "craft_13":"Monobike",
-	  "craft_14":"Velociraptor",
-	  "craft_15":"Dodge Coronet",
-      "craft_16":"Hudson Hornet",
-	  "craft_17":"Cadillac Eldorado",
-	  "craft_18":"Dodge Viper SRT10",
-	  "craft_19":"Dodge Viper SRT10-S",
-      "craft_20":"Scania S-520 ProfiLiner 8x4 ´16",
-	  "craft_21":"Scania S-520 HardLiner 8x4 40ft ´16",
-	  "craft_22":"Scania S-520 Hardliner 8x4 40ft Ext´16",
-      "craft_23":"MAN TGM HeavyDuty ´16",
-	  "craft_24":"Kaufbarer Scania_v1 (6,6 Mio)",
-	  "craft_25":"Kaufbarer Man-LKW (18,8 Mio)",
-      "craft_scaniat1":"Kaufbarer Scania-Bauplan",
-	  "craft_mant1":"Kaufbarer MAN-Bauplan",
-      "craft_26":"Dunkervoort `17",
-	  "craft_27":"Dunkervoort BNC `17",
-	  "craft_28":"IVECO Stralis EV 300",
-	  "craft_29":"IVECO Stralis EV 450",
-	  "craft_30":"IVECO Stralis EV 600",
-	  "craft_31":"Scania S-520 Hardliner Gerät ´16",
-	  "craft_32":"Streamside AR8",
-	  "craft_33":"Scania S-520 Highline T50 `16",
-	  "craft_34":"Scania S-520 Highline T75 `16",
-	  "craft_35":"Kaufbarer Scania S-520 Highline T22 `16",
-	  "craft_36":"Scania S-520 Highline T100 `16",
-	  "craft_37": "Kaufbar BMW M4 Carbon (G82) '21",
-	  "craft_38": "BMW M4CSL Competition '22",
-	  "craft_39": "Chevrolet Corvette ZR1 '25",
-	  "craft_40": "Imponte Duke o Death",
-	  "craft_41": "Plymouth Road Runner 440 '71",
-	  "craft_42": "Plymouth Road Runner GTX '71",
-	  "craft_43": "Jaguar XJ13 '66",
-	  "craft_44": "Chevrolet El Camino (Diverse Ausführungen)",
-	  "craft_45": "Chevrolet Bel Air '57",
-	  "craft_46": "WEY Tank 700 '24",
-	  "craft_47": "HVY Barrage",
-	  "craft_48": "Paramount Marauder",
-	  "craft_49": "BTR GAZ",
-	  "craft_50": "",
+/* ===== Mapping-Helfer ===== */
+function buildInverseTranslateForBase(){
+  const map=new Map(); // display(lower) -> internal
+  for(const key of baseItemKeys){ const disp=translateMap[key]; if(disp) map.set(String(disp).toLowerCase(), key); }
+  return map;
+}
+// einfache Alias-Liste für häufige Synonyme in prices
+const PRICE_ALIASES = new Map([
+  ["plastic","kunststoff"],
+  ["rubber","gummi"],
+  ["cotton","baumwolle"]
+]);
+function mapAnyKeyToInternal(raw, invMap){
+  const n = normKey(raw);
+  if(!n) return "";
+  // 1) bereits interner Key?
+  if(baseItemKeys.has(n) || rezepte[n]) return n;
+  // 2) display → internal
+  const viaDisplay = invMap.get(n.toLowerCase());
+  if(viaDisplay) return viaDisplay;
+  // 3) bekannte Aliase
+  const alias = PRICE_ALIASES.get(n);
+  if(alias) return alias;
+  return n; // als letzte Option (wird später ignoriert, wenn nicht base)
+}
 
-      "schem_1":"Corvette C2 Schablone",
-	  "schem_2":"Corvette C2 Stingray Schablone",
-	  "schem_3":"Tesla Model X Schablone",
-	  "schem_4":"Cybertruck Schablone",
-      "schem_5":"Cyberbeast Schablone",
-	  "schem_6":"AMC Javelin Schablone",
-	  "schem_7":"Quartz Regalia Schablone",
-	  "schem_8":"Quarz Regalia D-Type Schablone",
-      "schem_9":"Truffade Z-Type Schablone",
-	  "schem_10":"Truffade Z-Type-R Schablone",
-	  "schem_11":"Vapid Hotknife Schablone",
-	  "schem_12":"Vapid Hotknife RAW Schablone",
-      "schem_13":"Monobike Schablone",
-	  "schem_14":"Velociraptor Schablone",
-	  "schem_15":"Dodge Coronet Schablone",
-	  "schem_16":"Hudson Hornet Schablone",
-      "schem_17":"Cadillac Eldorado Schablone",
-	  "schem_18":"Dodge Viper SRT10 Schablone",
-	  "schem_19":"Dodge Viper SRT10-S Schablone",
-      "schem_20":"Scania S-520 Hardliner 8x4 ´16 Schablone",
-	  "schem_21":"Scania S-520 HardLiner 8x4 40ft ´16 Schablone",
-	  "schem_22":"Scania S-520 Hardliner 8x4 40ft Ext´16 Schablone",
-      "schem_23":"MAN TGM HeavyDuty ´16 Schablone",
-	  "schem_24":"Schablone","schem_25":"Schablone",
-	  "schem_26":"Donkervoort `17 Schablone",
-      "schem_27":"Donkervoort BNC `17 Schablone",
-	  "schem_28":"IVECO Stralis EV 300 Schablone",
-	  "schem_29":"IVECO Stralis EV 450 Schablone",
-	  "schem_30":"IVECO Stralis EV 600 Schablone",
-	  "schem_31":"Scania S-520 Hardliner Gerät ´16 Schablone",
-	  "schem_32":"Streamside AR8 Schablone",
-	  "schem_33":"Scania S-520 Highline T50 `16 Schablone",
-	  "schem_34":"Scania S-520 Highline T76 `16 Schablone",
-	  "schem_35":"Kaufbarer Kaufbarer Scania S-520 Highline T22 `16 Schablone",
-	  "schem_36":"Scania S-520 Highline T100 `16 Schablone",
-	  "schem_37": "schem_37 Schablone",
-	  "schem_38": "BMW M4CSL Competition '22 Schablone",
-	  "schem_39": "Chevrolet Corvette ZR1 '25 Schablone",
-	  "schem_40": "Imponte Duke o Death Schablone",
-	  "schem_41": "Plymouth Road Runner 440 '71 Schablone",
-	  "schem_42": "Plymouth Road Runner GTX '71 Schablone",
-	  "schem_43": "Jaguar XJ13 '66 Schablone",
-	  "schem_44": "Chevrolet El Camino (Diverse Ausführungen) Schablone",
-	  "schem_45": "Chevrolet Bel Air '57 Schablone",
-	  "schem_46": "WEY Tank 700 '24 Schablone",
-	  "schem_47": "HVY Barrage Schablone",
-	  "schem_48": "Paramount Marauder Schablone",
-	  "schem_49": "BTR GAZ Schablone",
-	  "schem_50": "",
+/* ===== Robuster Preis-Scan (Sliding Window) =====
+   Gehe jede Zeile und prüfe alle (i, i+1)-Paare als (item, price).
+   Nur val>=1; letzter gültiger Treffer gewinnt. */
+function scanPriceRowForPairs(row, invMap){
+  const keys = Object.keys(row);
+  for(let i=0; i<keys.length-1; i++){
+    const keyItem  = keys[i];
+    const keyPrice = keys[i+1];
+    const rawItem  = row[keyItem];
+    const rawPrice = row[keyPrice];
+    if(rawItem===undefined || rawItem==="" || rawPrice===undefined || rawPrice==="") continue;
+    const internal = mapAnyKeyToInternal(rawItem, invMap);
+    const val = parseEuroNumber(rawPrice);
+    if(!internal || !isFinite(val) || val < 1) continue;           // leere/ungültige Preise ignorieren
+    if(!baseItemKeys.has(internal)) continue;                       // nur Basisrohstoffe speichern
+    rohstoffPreise[internal] = Math.round(val);                     // letzter gültiger gewinnt
+  }
+}
 
-      "craft_blanko":"Leerer Bauplan",
-	  "craft1_karrosserie":"Karosserieteil",
-	  "craft1_motor":"Motorteil",
-	  "craft1_reifen":"Reifen",
-	  "craft1_getriebe":"Getriebeteil",
-      "craft1_batterie":"Autobatterie",
-	  "craft1_elektrik":"Elektrische Teile",
-	  "craft1_elektronik":"Elektronische Teile",
-	  "stoff":"Einfacher Stoff",
-	  "schwer_stoff":"Schwerer Stoff",
-      "craft1_carbon":"Carbonteil",
-	  "craft_Rucksack":"Rucksack (1000er)",
-	  "craft1_highspeed":"Highspeed Anschluss",
-	  "craft1_reinforced_alloy":"Verstärkte Legierung",
-	  "craft1_intelligent":"Intelligente Beschichtung",
-	  
+/* ========= Daten laden ========= */
+async function ladeDaten(){
+  try{
+    hintBox.textContent="🔄 Lade Daten ...";
 
-      "aluPlatte":"Aluminiumplatte",
-	  "stahlPlatte":"Stahlplatte",
-	  "stahlBarren":"Stahlbarren",
-	  "eisenStange":"Eisenstange",
-	  "eisenBarren":"Eisenbarren",
-      "kupferFolie":"Kupferfolie",
-	  "kupferBarren":"Kupferbarren",
-	  "kupferDraht":"Kupferdraht",
-	  "motoroil":"Motoröl","aluBox":"Aluminiumgehäuse",
-      "aluBarren":"Aluminiumbarren",
-	  "plastic":"Kunststoff",
-	  "gummi":"Gummi",
-	  "getriebeoil":"Getriebeöl",
-	  "schwefelacid":"Schwefelsäure",
-	  "cotton":"Baumwolle",
-      "schlacke":"Schlacke",
-	  "aluErz":"BauxitErz",
-	  "eisenErz":"Eisenerz",
-	  "kupferErz":"Kupfererz",
-	  "kohleBraun":"Braunkohle",
-	  "kohleStein":"Steinkohle",
-	  "rubin":"Geschliffener Rubin",
-	  "kobaltBarren":"Kobaltbarren",
-	  "goldBarren":"Goldbarren",
-    };
+    const [recipesRows,itemsRows,transRows,pricesRows]=await Promise.all([
+      gvizJSONP(TAB_RECIPES),
+      gvizJSONP(TAB_ITEMS),
+      gvizJSONP(TAB_TRANSL).catch(()=>[]),
+      gvizJSONP(TAB_PRICES).catch(()=>[])
+    ]);
 
-    const fundorte = {
-      "kohleBraun":"Kohlemine Hohenstein",
-	  "kohleStein":"Kohlemine Hohenstein",
-	  "kupferErz":"Kupfermine Hohenstein",
-	  "eisenErz":"Eisenmine Hohenstein",
-	  "aluErz":"Bauxitmine Hohenstein",
-	  "schwefelacid":"Chemiewerk Hohenstein",
-      "plastic":"Chemiewerk Hohenstein",
-	  "gummi":"Chemiewerk Hohenstein",
-	  "getriebeoil":"Baumarkt Hohenstein",
-	  "motoroil":"Baumarkt Hohenstein",
-	  "craft_blanko":"Baumarkt Hohenstein",
-    };
+    // translate
+    for(const r of transRows){
+      const ks=Object.keys(r);
+      const internal=normKey(r.internal||r.key||r.item||r[ks[0]]);
+      const display =String(r.display||r.name||r[ks[1]]||"").trim();
+      if(internal && display) translateMap[internal]=display;
+    }
 
-    const rohstoffPreise = {
-      "schwefelacid":89,
-	  "gummi":268,
-	  "plastic":184,
-	  "getriebeoil":142,
-	  "motoroil":68,
-	  "craft_blanko":1000,
-	  "aluBarren":315,
-	  "cotton":150,
-      "stahlBarren":198,
-	  "eisenBarren":81,
-	  "kupferBarren":96,
-	  "rubin":532,
-	  "kohleBraun":37,
-	  "kohleStein":29,
-	  "kobaltBarren":424,
-	  "goldBarren":414,
-    };
+    // recipes
+    const passed=new Set();
+    for(const r of recipesRows){
+      const k=normKey(r.key); if(!k) continue;
+      baseNames[k]=String(r.name??"").trim()||k;
+      rezepte[k]={wert:Number(r.wert??0)||0,picture:String(r.picture??"").trim(),itemsRequired:[]};
+      const sel=Number(r.selectable);
+      if(new Set(DEFAULT_BUCKETS).has(sel)) passed.add(k);
+    }
 
-    const startSelect = document.getElementById("startSelect");
-    const endSelect   = document.getElementById("endSelect");
-    const ausgabe     = document.getElementById("ausgabe");
+    // recipe_items + Base-Keys + Reverse-Graph
+    const byProd={};
+    for(const r of itemsRows){
+      const p=normKey(r.product), i=normKey(r.item), q=Number(r.qty??0)||0;
+      if(!p||!i||!q) continue;
+      (byProd[p]??=[]).push([i,q]);
+      if(rezepte[i] && rezepte[p]) addReverseEdge(i,p);
+    }
+    for(const k of Object.keys(rezepte)){
+      const arr=byProd[k]||[];
+      rezepte[k].itemsRequired=arr;
+      for(const [dep] of arr){ if(!rezepte[dep]) baseItemKeys.add(dep); }
+    }
 
-    const erlaubteItems = Object.keys(rezepte).filter(k => k.startsWith("craft_"));
-    erlaubteItems.forEach(key => {
-      const name = anzeigeNamen[key] || key;
-      [startSelect, endSelect].forEach(sel => {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = name;
-        sel.appendChild(opt);
-      });
+    // prices: Sliding-Window je Zeile
+    const invMap=buildInverseTranslateForBase();
+    for(const row of pricesRows){ scanPriceRowForPairs(row, invMap); }
+
+    // Dropdowns
+    allDropdownCandidates=Array.from(passed).sort((a,b)=>{
+      const na=Number(a.replace(/\D+/g,""))||0, nb=Number(b.replace(/\D+/g,""))||0;
+      return na-nb || a.localeCompare(b);
     });
+    fillDropdown(startSelect, allDropdownCandidates);
+    fillDropdown(endSelect,   allDropdownCandidates);
+    startSelect.disabled=false; endSelect.disabled=false;
 
-    function updateAnzeige() {
-      const start = startSelect.value;
-      const ziel  = endSelect.value;
+    hintBox.textContent="💡 Hinweis: Werte sind berechnet, ohne Gewähr.";
+  }catch(e){
+    console.error(e);
+    hintBox.classList.add("error-box");
+    hintBox.textContent="❌ "+e.message;
+  }
+}
 
-      if (!ziel) {
-        ausgabe.textContent = "❗ Bitte ein Zielprodukt auswählen.";
-        return;
-      }
-
-      const pfad = findeRezeptPfad(start, ziel);
-      if (!pfad) {
-        ausgabe.textContent = "⚠️ Kein Pfad von Start zu Ziel gefunden.";
-        return;
-      }
-
-      const rohstoffe = {};
-      const verwendetInMap = {};
-
-      let startIndex = 0;
-      if (start) startIndex = pfad.indexOf(start) + 1;
-
-      const bereitsVorhanden = new Set();
-      if (start) bereitsVorhanden.add(start);
-
-      const geplanteHerstellungen = new Set(pfad.slice(startIndex));
-
-      // Rohstoff-Sammlung (nur bis Nicht-Craft bzw. craft1_* etc.; Pfad-Crafts werden übersprungen)
-      function sammleMaterialien(item, menge = 1) {
-        const rezept = rezepte[item];
-        if (!rezept) return;
-
-        rezept.itemsRequired.forEach(([roh, m]) => {
-          const total = m * menge;
-          if (rezepte[roh]) {
-            if (bereitsVorhanden.has(roh)) return;
-            if (geplanteHerstellungen.has(roh)) return; // Pfad-Stufe als Material nicht auflösen
-            sammleMaterialien(roh, total);
-            if (!verwendetInMap[roh]) verwendetInMap[roh] = new Set();
-            verwendetInMap[roh].add(item);
-          } else {
-            if (!rohstoffe[roh]) rohstoffe[roh] = { menge: 0, verwendetIn: {} };
-            rohstoffe[roh].menge += total;
-            const verwendung = anzeigeNamen[item] || item;
-            rohstoffe[roh].verwendetIn[verwendung] = (rohstoffe[roh].verwendetIn[verwendung] || 0) + total;
-          }
-        });
-      }
-      for (let i = startIndex; i < pfad.length; i++) sammleMaterialien(pfad[i], 1);
-
-      let rohstoffText = "📦 Rohstoffliste:\n";
-      let gesamt = 0;
-      for (const key in rohstoffe) {
-        const eintrag = rohstoffe[key];
-        const name = anzeigeNamen[key] || key;
-        const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-        const preis = rohstoffPreise[key] || 0;
-        const kosten = Math.round(preis * eintrag.menge);
-        gesamt += kosten;
-        rohstoffText += `- ${eintrag.menge}x ${name}${ort} ${preis} €/St = ${kosten} €\n`;
-        for (const verwendung in eintrag.verwendetIn) {
-          rohstoffText += `    ↳ verwendet in: ${verwendung} (${eintrag.verwendetIn[verwendung]})\n`;
-        }
-      }
-
-      // 🔧 Neuer: vollständige Prozess-Reihenfolge (Topologie) inkl. Zwischen-Crafts (ohne Doppelzählung der Pfadstufen)
-      const herstellungAggregiert = baueAggregiertenHerstellplanV2(pfad, startIndex, bereitsVorhanden);
-
-      ausgabe.textContent =
-        `🔄 Pfad: ${pfad.map(k => anzeigeNamen[k] || k).join(" → ")}\n` +
-        `\n${rohstoffText}` +
-        `\n💰 Gesamtkosten: ${gesamt} €\n` +
-        herstellungAggregiert;
-
-      const bildAnzeige = document.getElementById("bildAnzeige");
-      const zielRezept = rezepte[ziel];
-      if (zielRezept && zielRezept.picture) {
-        bildAnzeige.src = zielRezept.picture;
-        bildAnzeige.style.display = "block";
-      } else {
-        bildAnzeige.style.display = "none";
-      }
+/* ========= Pfad / Prozess / Anzeige ========= */
+function sammleRohstoffe(item,m,bag){
+  const r=rezepte[item]; if(!r) return;
+  for(const[dep,q]of(r.itemsRequired||[])){
+    const tot=q*m;
+    if(rezepte[dep]) sammleRohstoffe(dep, tot, bag);
+    else{
+      if(!bag[dep]) bag[dep]={menge:0,verwendetIn:{}};
+      bag[dep].menge+=tot;
+      bag[dep].verwendetIn[displayName(item)]=(bag[dep].verwendetIn[displayName(item)]||0)+tot;
     }
-
-    /* ░░░ Topologischer Herstellplan mit Zwischen-Crafts, ohne Pfad-Doppelzählung ░░░ */
-    function baueAggregiertenHerstellplanV2(pfad, startIndex = 0, bereitsVorhandenSet = new Set()) {
-      const teilPfad = pfad.slice(startIndex);
-      const planned  = new Set(teilPfad);
-
-      // Mengen für NICHT-PFAD-Crafts
-      const qty = {};               // { craftItem: gesamtMenge }
-      const edges = {};             // dep -> [items die dep benötigen]
-      const nodes = new Set();      // alle Craft-Nodes, die im Plan auftauchen
-
-      function addEdge(dep, to){
-        if (!edges[dep]) edges[dep] = new Set();
-        edges[dep].add(to);
-      }
-
-      function accumulate(item, mult = 1) {
-        const rezept = rezepte[item];
-        if (!rezept) return;
-
-        for (const [dep, m] of rezept.itemsRequired) {
-          if (!rezepte[dep]) continue; // nur Craft-Knoten für Graph
-          addEdge(dep, item);
-          nodes.add(dep); nodes.add(item);
-
-          const need = m * mult;
-          if (planned.has(dep) || bereitsVorhandenSet.has(dep)) {
-            // Pfad- oder bereits vorhandene Stufe: NICHT zur Menge addieren, Abhängigkeit nur für Reihenfolge
-            continue;
-          } else {
-            qty[dep] = (qty[dep] || 0) + need;
-            accumulate(dep, need);
-          }
-        }
-      }
-
-      // Starte von den geplanten Stufen (jede 1x)
-      for (const it of teilPfad) {
-        nodes.add(it);
-        accumulate(it, 1);
-      }
-      // auch non-planned, die nur als dep vorkamen
-      for (const k of Object.keys(qty)) nodes.add(k);
-
-      // Topologisches Sortieren der beteiligten Nodes
-      // Kanten: dep -> item (dep muss vor item)
-      // Wir berücksichtigen nur Nodes aus 'nodes'
-      const indeg = {};
-      for (const n of nodes) indeg[n] = 0;
-      for (const d in edges) {
-        for (const t of edges[d]) {
-          if (nodes.has(t)) indeg[t] = (indeg[t] || 0) + 1;
-        }
-      }
-      const queue = [];
-      for (const n of nodes) if ((indeg[n]||0) === 0) queue.push(n);
-
-      const topo = [];
-      while (queue.length) {
-        const n = queue.shift();
-        topo.push(n);
-        if (edges[n]) {
-          for (const t of edges[n]) {
-            if (!nodes.has(t)) continue;
-            indeg[t]--;
-            if (indeg[t] === 0) queue.push(t);
-          }
-        }
-      }
-
-      // Fallback: falls Zyklus (sollte nicht sein), nutze zumindest Pfad-Reihenfolge
-      const setTopo = new Set(topo);
-      for (const p of teilPfad) if (!setTopo.has(p)) topo.push(p);
-
-      // Ausgabe bauen
-      let out = "\n🔧 Herstellprozesse (Abarbeitungsreihenfolge):\n";
-      for (const item of topo) {
-        const isPlanned = planned.has(item);
-        const amount = isPlanned ? 1 : (qty[item] || 0);
-        if (amount <= 0) continue; // nur relevante non-planned + alle planned
-
-        const name = anzeigeNamen[item] || item;
-        out += `- ${amount}x ${name}\n`;
-
-        // direkte Anforderungen des Items (inkl. Rohstoffe & ggf. Pfad-Dependencies)
-        const r = rezepte[item];
-        if (!r) continue;
-        for (const [dep, m] of r.itemsRequired) {
-          const depName = anzeigeNamen[dep] || dep;
-          const need = m * amount;
-
-          // Für Anzeige: zeige ALLE direkten Anforderungen (auch Pfad-Stufen), damit der Spieler die Schritte sieht.
-          out += `    ⤷ ${need}x ${depName}\n`;
-        }
-      }
-      return out;
+  }
+}
+function baueHerstellprozess(target){
+  const qty={},edges={},nodes=new Set();
+  function addEdge(d,t){ (edges[d]??=new Set()).add(t); }
+  function collect(it,m){ const r=rezepte[it]; if(!r) return; nodes.add(it);
+    for(const[dep,x]of(r.itemsRequired||[])){ const need=x*m;
+      if(rezepte[dep]){ addEdge(dep,it); nodes.add(dep); qty[dep]=(qty[dep]||0)+need; collect(dep,need); }
     }
-
-    function findeRezeptPfad(start, ziel) {
-      const pfad = [];
-      let current = ziel;
-
-      while (current) {
-        pfad.unshift(current);
-        const rezept = rezepte[current];
-        if (!rezept) return null;
-
-        const vorgaenger = rezept.itemsRequired.find(([item]) =>
-          item.startsWith("craft_") && rezepte[item]
-        );
-
-        if (!vorgaenger) break;
-        current = vorgaenger[0];
-
-        if (start && current === start) {
-          pfad.unshift(current);
-          return pfad;
-        }
-      }
-      return start ? null : pfad;
+  }
+  collect(target,1);
+  const indeg={}; for(const n of nodes) indeg[n]=0;
+  for(const d in edges) for(const t of edges[d]) if(nodes.has(t)) indeg[t]=(indeg[t]||0)+1;
+  const q=[]; for(const n of nodes) if((indeg[n]||0)===0) q.push(n);
+  const topo=[]; while(q.length){ const n=q.shift(); topo.push(n); if(edges[n]) for(const t of edges[n]){ indeg[t]--; if(indeg[t]===0) q.push(t); } }
+  if(!topo.includes(target)) topo.push(target);
+  let txt="🔧 Herstellprozesse (Abarbeitungsreihenfolge):\n";
+  for(const it of topo){
+    const amount=(it===target)?1:(qty[it]||0);
+    if(amount<=0 && it!==target) continue;
+    txt+=`- ${amount}x ${displayName(it)}\n`;
+    const r=rezepte[it]; if(!r) continue;
+    for(const[dep,m] of (r.itemsRequired||[])){
+      txt+=`    ⤷ ${m*amount}x ${displayName(dep)}\n`;
     }
+  }
+  return txt;
+}
+function updateAnzeige(){
+  const start=normKey(startSelect.value||"");
+  const reachable=Array.from(reachableFrom(start));
+  fillDropdown(endSelect, reachable.length?reachable:allDropdownCandidates);
 
-    startSelect.addEventListener("change", updateAnzeige);
-    endSelect.addEventListener("change", updateAnzeige);
-  </script>
+  const ziel=normKey(endSelect.value||"");
+  if(!ziel){ausgabe.textContent="Bitte Zielprodukt auswählen.";bilderContainer.innerHTML="";return;}
+
+  // Rohstoffe
+  const bag={}; sammleRohstoffe(ziel,1,bag);
+  let roh="📦 Rohstoffliste:\n"; let sum=0;
+  for(const k in bag){
+    const e=bag[k], p=rohstoffPreise[k]||0, c=Math.round(p*e.menge);
+    roh+=`- ${e.menge}x ${displayName(k)} ${p.toLocaleString('de-DE')} €/St = ${c.toLocaleString('de-DE')} €\n`;
+    for(const v in e.verwendetIn) roh+=`    ↳ verwendet in: ${v} (${e.verwendetIn[v]})\n`;
+    sum+=c;
+  }
+
+  const proc=baueHerstellprozess(ziel);
+  ausgabe.textContent=`🔄 Pfad: ${displayName(ziel)}\n\n${roh}\n💰 Gesamtkosten: ${sum.toLocaleString('de-DE')} €\n\n${proc}`;
+
+  // Mehrere Bilder (Semikolon-getrennt)
+  bilderContainer.innerHTML="";
+  const r=rezepte[ziel];
+  if(r && r.picture){
+    const urls=r.picture.split(";").map(s=>s.trim()).filter(s=>/^https?:\/\//i.test(s));
+    for(const url of urls){
+      const img=document.createElement("img");
+      img.src=url; img.alt=displayName(ziel);
+      bilderContainer.appendChild(img);
+    }
+  }
+}
+
+/* ========= Events & Start ========= */
+startSelect.addEventListener("change", ()=>{
+  const s=normKey(startSelect.value||"");
+  const reach=Array.from(reachableFrom(s));
+  fillDropdown(endSelect, reach.length?reach:allDropdownCandidates);
+  ausgabe.textContent="Bitte Zielprodukt auswählen.";
+  bilderContainer.innerHTML="";
+});
+endSelect.addEventListener("change", updateAnzeige);
+ladeDaten();
+</script>
 </body>
 </html>
