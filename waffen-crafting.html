@@ -3,602 +3,706 @@
 <head>
   <meta charset="UTF-8" />
   <title>Waffen Crafting-System - Lostparadise.eu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/favicon-96x96.png" />
+
   <style>
-    body {
-      font-family: Arial;
-      margin: 2rem;
-      background-color: #0d1117;
-      color: #f0f0f0;
-    background-image: url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-CraftingWaffen2.png');
-  background-size: contain;        /* Bild vollständig anzeigen, ohne Abschneiden */
-  background-position: center center;  /* Horizontal & vertikal zentrieren */
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+    :root{
+      --bg:#0d1117;
+      --panel:#151b23;
+      --ink:#f0f0f0;
+      --muted:#97a3b6;
+      --border:#666;
+      --accent:#ffd700;
+      --panel-2:#2e2e2e;
     }
 
-    select, pre {
-      font-size: 1rem;
-      padding: 0.5rem;
-      width: 47%;
-      background-color: #151b23;
-      color: #ffffff;
-      border: 1px solid #666;
-      margin-bottom: 1rem;
+    body{
+      font-family:Arial,system-ui;
+      margin:2rem;
+      background:var(--bg);
+      color:var(--ink);
+
+      /* Waffen-Hintergrund */
+      background-image:url('https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-CraftingWaffen2.png');
+      background-size:contain;
+      background-repeat:no-repeat;
+      background-position:center;
+      background-attachment:fixed;
     }
 
-    pre {
-      background: #2e2e2e;
-      padding: 1rem;
-      white-space: pre-wrap;
-      border: 1px solid #666;
+    .kopfzeile{
+      display:flex;
+      align-items:center;
+      gap:1rem;
+    }
+    .kopfzeile img{
+      height:80px;
+      width:auto;
+      object-fit:contain;
     }
 
-    .kopfzeile {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+    /* Link oben wie in alter Waffen-Seite */
+    .link-button {
+      display:inline-block;
+      padding:.6rem 1rem;
+      background-color:var(--panel);
+      color:var(--accent);
+      text-decoration:none;
+      border:1px solid var(--border);
+      border-radius:5px;
+      transition:background-color .3s ease,color .3s ease;
+    }
+    .link-button:hover{
+      background-color:var(--accent);
+      color:var(--panel);
     }
 
-    .kopfzeile img {
-      max-height: 80px;
+    .controls{
+      display:flex;
+      gap:1rem;
+      align-items:flex-end;
+      margin:.5rem 0 1rem;
+      flex-wrap:wrap;
     }
-.hinweis-box {
-  background-color: #2e2e2e;
-  color: #ffd700;
-  padding: 1rem;
-  border-left: 5px solid #ffd700;
-  margin: 1rem 0;
-  width: 47%;
-	
-}
-.link-button {
-  display: inline-block;
-  padding: 0.6rem 1rem;
-  background-color: #151b23;
-  color: #ffd700;
-  text-decoration: none;
-  border: 1px solid #666;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.link-button:hover {
-  background-color: #ffd700;
-  color: #151b23;
-}
-	  
+    .controls select{
+      flex:1 1 48%;
+      max-width:48%;
+      min-width:320px;
+      font-size:1rem;
+      padding:.6rem .75rem;
+      background:var(--panel);
+      color:#fff;
+      border:1px solid var(--border);
+      border-radius:8px;
+    }
+    .controls select:focus{
+      outline:2px solid var(--accent);
+      outline-offset:2px;
+    }
+
+    /* Hinweis-Box gelb links, wie bei Waffen-Seite */
+    .hinweis-box{
+      background:var(--panel-2);
+      color:var(--accent);
+      padding:1rem;
+      border-left:5px solid var(--accent);
+      margin:0 0 1rem;
+      width:100%;
+      border-radius:6px;
+      white-space:pre-wrap;
+    }
+    .error-box{
+      color:#ff9aa2;
+    }
+
+    .ausgabe-wrapper{
+      display:flex;
+      gap:2rem;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      margin-top:0;
+    }
+    .ausgabe-wrapper>*{
+      margin-top:0;
+    }
+    .col{
+      flex:1 1 48%;
+      max-width:48%;
+      min-width:320px;
+    }
+
+    pre{
+      background:var(--panel-2);
+      padding:1rem 1.25rem;
+      white-space:pre-wrap;
+      border:1px solid var(--border);
+      border-radius:10px;
+      line-height:1.45;
+      min-height:280px;
+      font-family:ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+    }
+
+    #bilderContainer img{
+      display:block;
+      max-width:100%;
+      height:auto;
+      margin-bottom:1rem;
+      border:3px double #ccc;
+      border-radius:8px;
+      background:#1b1f24;
+      box-shadow:0 0 10px rgba(0,255,255,.2);
+      object-fit:contain;
+    }
+
+    @media (max-width:1100px){
+      .controls select{
+        flex-basis:100%;
+        max-width:100%;
+        min-width:0;
+      }
+      .hinweis-box{
+        width:100%;
+      }
+      .col{
+        flex-basis:100%;
+        max-width:100%;
+        min-width:0;
+      }
+    }
   </style>
 </head>
 <body>
-  
-<div class="kopfzeile">
-  <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-CraftingWaffen2.png" alt="Lostparadise.eu Waffen logo" width="100" />
-  <h1>Lostparadise.eu - Waffen - Crafting-System</h1>
-</div>
-<br>
-	<a href="index.html" class="link-button">Zum Fahrzeug-Crafting</a>
-</br>
-<br />
-  <select id="itemSelect" onchange="zeigeErgebnis(this.value)">
-    <option value="">-- Item auswählen --</option>
-  </select>
-  <br />
 
-<div class="hinweis-box">
-  💡 Hinweis! <br>
-	Die Werte sind berechnet und nicht garantiert! Bei Fehlern ➔ Marius Braun<br>
-	Verwendung auf eigene Gefahr<br>
-</div>	
+  <!-- Kopfzeile -->
+  <div class="kopfzeile">
+    <img src="https://raw.githubusercontent.com/BattleNogare/lostparadise-herstellung/main/Lostparadise-CraftingWaffen2.png" alt="Lostparadise.eu Waffen Logo" />
+    <h1>Lostparadise.eu - Waffen - Crafting-System</h1>
+  </div>
 
-  <pre id="ausgabe"></pre>
+  <!-- Zur Fahrzeug-Seite -->
+  <p>
+    <a href="index.html" class="link-button">Zum Fahrzeug-Crafting</a>
+  </p>
 
-  <script>
-    const rezepte = {
-      "craft_1": {
-    	wert: 0,
-    	dauer: 60,
-    	itemsRequired: [
-      ["gun_cooling", 2],
-      ["gun_lauf", 1],
-      ["gun_teil", 3],
-      ["gun_optik", 2],
-      ["gun_feder", 2],
-      ["gun_griff", 2]
-    ]
-  },
-      
-      "craft_2": {
-    	wert: 0,
-   	dauer: 60,
-    	itemsRequired: [
-      ["gun_cooling", 3],
-      ["gun_lauf", 2],
-      ["gun_teil", 5],
-      ["gun_optik", 3],
-      ["gun_feder", 3],
-      ["gun_griff", 3]
-    ]
-  },
-      
-      "craft_3": {
-    	wert: 0,
-    	dauer: 60,
-    	itemsRequired: [
-      ["gun_cooling", 4],
-      ["gun_lauf", 3],
-      ["gun_teil", 6],
-      ["gun_optik", 5],
-      ["gun_feder", 4],
-      ["gun_griff", 4]
-    ]
-  },
-      
-      "craft_4": {
-    wert: 0,
-    dauer: 60,
-    itemsRequired: [
-      ["gun_cooling", 5],
-      ["gun_lauf", 4],
-      ["gun_teil", 7],
-      ["gun_optik", 6],
-      ["gun_feder", 5],
-      ["gun_griff", 5]
-    ]
-  },
-      
-      "craft_5": {
-    	wert: 0,
-    	dauer: 60,
-    	itemsRequired: [
-      ["gun_cooling", 7],
-      ["gun_lauf", 5],
-      ["gun_teil", 6],
-      ["gun_optik", 7],
-      ["gun_feder", 6],
-      ["gun_griff", 4]
-    ]
-  },
-      
-      "craft_6": {
-    	wert: 0,
-    	dauer: 60,
-    	itemsRequired: [
-      ["gun_cooling", 6],
-      ["gun_lauf", 6],
-      ["gun_teil", 5],
-      ["gun_optik", 4],
-      ["gun_feder", 2],
-      ["gun_griff", 3]
-    ]
-  },
-      
-      "craft_7": {
-    wert: 0,
-    dauer: 60,
-    itemsRequired: [
-      ["gun_cooling", 10],
-      ["gun_lauf", 6],
-      ["gun_teil", 8],
-      ["gun_optik", 5],
-      ["gun_feder", 4],
-      ["gun_griff", 5]
-    ]
-  },
-      
-      "craft_8": {
-    wert: 0,
-    dauer: 60,
-    itemsRequired: [
-      ["gun_cooling", 10],
-      ["gun_lauf", 6],
-      ["gun_teil", 8],
-      ["gun_optik", 5],
-      ["gun_feder", 4],
-      ["gun_griff", 5]
-    ]
-  },
-      
-      "craft_9": {
-    wert: 0,
-    dauer: 60,
-    itemsRequired: [
-      ["gun_cooling", 25],
-      ["gun_lauf", 15],
-      ["gun_teil", 25],
-      ["gun_optik", 12],
-      ["gun_feder", 12],
-      ["gun_griff", 15]
-    ]
-  },
-      
-      "craft_10": {
-    wert: 0,
-    dauer: 60,
-    itemsRequired: [
-      ["gun_cooling", 60],
-      ["gun_lauf", 45],
-      ["gun_teil", 50],
-      ["gun_optik", 55],
-      ["gun_feder", 25],
-      ["gun_griff", 45]
-    ]
-  },
-      
-      
-      "gun_cooling": {
-        wert: 0,
-        dauer: 30,
-        itemsRequired: [
-          ["kupferFolie", 15],
-          ["plastic", 25],
-          ["aluPlatte", 5],
-          ["gummi", 20],
-          ["aluBox", 4],
-        ]
-      },
-      
-      "gun_lauf": {
-        wert: 0,
-        dauer: 30,
-        itemsRequired: [
-          ["aluPlatte", 2],
-          ["stahlBarren", 5],
-          ["kupferFolie", 5],
-          ["eisenStange", 10],
-        ]
-      },
-      
-      "gun_griff": {
-        wert: 0,
-        dauer: 30,
-        itemsRequired: [
-          ["aluPlatte", 15],
-          ["gummi", 5],
-          ["plastic", 5],
-          ["aluBox", 15],
-        ]
-      },
-      
-      "gun_feder": {
-        wert: 0,
-        dauer: 30,
-        itemsRequired: [
-          ["eisenStange", 15],
-          ["stahlBarren", 25],
-          ["kupferDraht", 40],
-        ]
-      },
-      
-      "gun_teil": {
-        wert: 0,
-        dauer: 120,
-        itemsRequired: [
-          ["eisenStange", 5],
-          ["stahlBarren", 5],
-          ["kupferDraht", 10],
-          ["plastic", 5],
-          ["gummi", 5],
-          ["aluPlatte", 5],
-        ]
-      },
-      
-      "gun_optik": {
-        wert: 0,
-        dauer: 120,
-        itemsRequired: [
-          ["kupferDraht", 5],
-	  ["kupferFolie", 5],
-          ["aluPlatte", 10],
-          ["plastic", 5],
-          ["gummi", 5],
-	  ["kohleStein", 5],	
-          ["kohleBraun", 10],
-        ]
-      },
-      
-      
-      "schwer_stoff": {
-        wert: 0,
-        dauer: 4.8,
-        itemsRequired: [
-          ["stoff", 1],
-          ["aluBarren", 0.4],
-        ]
-      },
-      
-      "stoff": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["cotton", 2],
-        ]
-      },
-      
-      "kupferFolie": {
-        wert: 0,
-        dauer: 4.8,
-        itemsRequired: [
-          ["kupferBarren", 2],
-        ]
-      },
-      "kupferDraht": {
-        wert: 0,
-        dauer: 4.8,
-        itemsRequired: [
-          ["kupferBarren", 1],
-        ]
-      },
-      
-      "kupferPulver": {
-        wert: 0,
-        dauer: 4.8,
-        itemsRequired: [
-          ["kupferBarren", 2],
-        ]
-      },
-      "eisenPlatte": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["eisenBarren", 1],
-        ]
-      },
-      "eisenStange": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["eisenBarren", 1],
-        ]
-      },
-      
-      "aluPlatte": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["aluBarren", 1],
-        ]
-      },
-      
-      "stahlPlatte": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["stahlBarren", 1],
-        ]
-      },
-      
-      "aluBox": {
-        wert: 0,
-        dauer: 1.2,
-        itemsRequired: [
-          ["aluBarren", 3],
-        ]
-      },
-            
+  <!-- Steuer-Elemente -->
+  <div class="controls">
+    <select id="startSelect" disabled>
+      <option value="">-- Optional: Startprodukt --</option>
+    </select>
 
+    <select id="endSelect" disabled>
+      <option value="">-- Zielprodukt auswählen --</option>
+    </select>
+  </div>
 
-      
-    };
+  <!-- Hinweis -->
+  <div class="hinweis-box" id="hintBox">
+    💡 Hinweis!  
+    Die Werte sind berechnet und nicht garantiert!  
+    Verwendung auf eigene Gefahr.  
+    🔄 Lade Daten aus Google Sheets …
+  </div>
 
-    const anzeigeNamen = {
-      "craft_1": "AAC MPW Short",
-      "craft_2": "AAC MPW Carbine",
-      "craft_3": "AAC MPW Long",
-      "craft_4": "ARC Remington 556(VFG-CQB)",
-      "craft_5": "HK416 CUSTOM (VFG)",
-      "craft_6": "M4A1 Tactical (afg)",
-      "craft_7": "MK18 MOD1 (VFG)",
-      "craft_8": "R11 RSASS",
-      "craft_9": "Remington M2010 ERS",
-      "craft_10": "M249",
-      
-      "gun_cooling": "Waffenkühlkörper",
-      "gun_lauf": "Waffenlauf",
-      "gun_griff": "Waffengriff",
-      "gun_feder": "Waffenfeder",
-      "gun_teil": "Waffenteil",
-      "gun_optik": "Waffenoptik",
+  <!-- Ausgabe-Bereich -->
+  <div class="ausgabe-wrapper">
+    <div class="col">
+      <pre id="ausgabe">Bitte Zielprodukt auswählen.</pre>
+    </div>
+    <div class="col" id="bilderContainer"></div>
+  </div>
 
-      "aluPlatte": "Aluminiumplatte",
-      "stahlPlatte": "Stahlplatte",
-      "stahlBarren": "Stahlbarren",
-      "eisenStange": "Eisenstange",
-      "eisenBarren": "Eisenbarren",
-      "kupferFolie": "Kupferfolie",
-      "kupferBarren": "Kupferbarren",
-      "kupferDraht": "Kupferdraht",
-      "aluBox": "Aluminiumgehäuse",
-      "aluBarren": "Aluminiumbarren",
-      "plastic": "Kunststoff",
-      "gummi": "Gummi",
-      "kohleBraun": "Braunkohle",
-      "kohleStein": "Steinkohle",
-      
-      
-    };
+<script>
+/* ========= Konfig ========= */
+const SHEET_ID = "1ObAKUBNv5IjXEyY0TD85gK9dJhlm8Uq7Qj6QZgHkoZg";
+const TAB_RECIPES = "recipes";
+const TAB_ITEMS   = "recipe_items";
+const TAB_TRANSL  = "translate";
+const TAB_PRICES  = "prices";
 
-    const fundorte = {
-      "kohleBraun": "Kohlemine",
-      "kohleStein": "Kohlemine",
-      "plastic": "Chemiewerk",
-      "gummi": "Chemiewerk",
-    
-    
-    };
+/* HIER WICHTIG:
+   Waffen-Crafting == Bucket 3
+*/
+const DEFAULT_BUCKETS = [3];
 
-    const rohstoffPreise = {
-      "gummi": 255,
-      "plastic": 175,
-      "aluBarren": 371,
-      "stahlBarren": 233,
-      "eisenBarren": 81,
-      "kupferBarren": 96,
-      "kohleBraun": 37,
-      "kohleStein": 29,
-    };
+/* ========= State ========= */
+const startSelect = document.getElementById("startSelect");
+const endSelect   = document.getElementById("endSelect");
+const ausgabe     = document.getElementById("ausgabe");
+const hintBox     = document.getElementById("hintBox");
+const bilderContainer = document.getElementById("bilderContainer");
 
-    const select = document.getElementById("itemSelect");
-    const ausgabe = document.getElementById("ausgabe");
+const rezepte = {};
+const baseNames = {};
+const translateMap = {};
+const displayNameCache = new Map();
 
-const erlaubteItems = [
-	"craft_1",
-	"craft_2",
-	"craft_3",
-	"craft_4",
-	"craft_5",
-	"craft_6",
-	"craft_7",
-	"craft_8",
-	"craft_9",
-	"craft_10",
+const reverseEdges = {};
+const baseItemKeys = new Set();
+const rohstoffPreise = {};
 
-  //"Rucksack",
-  // Füge hier weitere craft-Keys hinzu, die angezeigt werden sollen
-];
+let allowedBuckets = new Set(DEFAULT_BUCKETS);
+let allDropdownCandidates = [];
 
-for (let key of erlaubteItems) {
-  if (rezepte[key]) {
+/* ========= Utils ========= */
+function normKey(v){
+  return String(v ?? "")
+    .normalize("NFKC")
+    .replace(/[\u00A0\u200B\t\n\r]+/g,"") // unsichtbare
+    .replace(/\s+/g," ")                 // doppelte Spaces
+    .trim()
+    .replace(/[;:]+$/,"")                // störende Endzeichen
+    .toLowerCase();
+}
+
+function parseEuroNumber(v){
+  if(v==null) return NaN;
+  if(typeof v==="number" && isFinite(v)) return v;
+  let s=String(v).trim();
+  if(!s) return NaN;
+  s=s.replace(/[^\d.,-]/g,'');
+  if(!/[.,]/.test(s)) return Number(s);
+
+  const d=s.lastIndexOf('.');
+  const c=s.lastIndexOf(',');
+  const decIsComma = c > d;
+
+  if(decIsComma){
+    // "1.234,56" -> "1234.56"
+    s=s.replace(/\./g,'');
+    const i=s.lastIndexOf(',');
+    s=s.slice(0,i).replace(/,/g,'') + '.' + s.slice(i+1).replace(/,/g,'');
+  } else {
+    // "1,234.56" -> "1234.56"
+    s=s.replace(/,/g,'');
+  }
+  const n=Number(s);
+  return isFinite(n)?n:NaN;
+}
+
+function displayName(k){
+  if(!k) return "";
+  if(displayNameCache.has(k)) return displayNameCache.get(k);
+  const n=translateMap[k] || baseNames[k] || k;
+  displayNameCache.set(k,n);
+  return n;
+}
+
+function addReverseEdge(dep,prod){
+  if(!reverseEdges[dep]) reverseEdges[dep]=new Set();
+  reverseEdges[dep].add(prod);
+}
+
+function fillDropdown(sel,keys){
+  const prev = sel.value;
+  sel.innerHTML = "";
+
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = (sel===startSelect)
+    ? "-- Optional: Startprodukt --"
+    : "-- Zielprodukt auswählen --";
+  sel.appendChild(first);
+
+  for(const k of keys){
     const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = anzeigeNamen[key] || key;
-    select.appendChild(opt);
+    opt.value = k;
+    opt.textContent = displayName(k);
+    sel.appendChild(opt);
   }
+
+  if(prev && keys.includes(prev)) sel.value=prev;
 }
 
-    function zeigeRezept() {
-      const key = select.value;
-      if (!key) return ausgabe.textContent = "";
+function reachableFrom(startKey){
+  if(!startKey) return new Set(allDropdownCandidates);
 
-      const materialien = {};
-      let gesamtDauer = 0;
+  const visited = new Set([startKey]);
+  const q = [startKey];
+  const res = new Set();
 
-      const herstellung = verarbeiteRezept(key, 0, materialien, (dauer) => gesamtDauer += dauer);
-      const { liste, kosten } = generiereMaterialListe(materialien);
-      const gesamtWert = rezepte[key]?.wert || 0;
-      const gewinn = gesamtWert - kosten;
-
-      ausgabe.textContent = herstellung +
-        "\n📦 Gesamtliste Rohstoffe:\n" + liste +
-        `\n💰 Materialkosten: ${kosten} €` +
-        `\n💰 Gesamtwert: ${gesamtWert} €` +
-        `\n📈 Gewinn: ${gewinn} €` +
-        `\n⏱️ Herstellungsdauer (gesamt): ${gesamtDauer} Minuten`;
-    }
-
-function berechneMaterialienUndProzesse(item, menge = 1, rohstoffe = {}, zwischenprodukte = {}, aufrufKette = {}) {
-  const daten = rezepte[item];
-  if (!daten || !daten.itemsRequired) return;
-
-  if (!zwischenprodukte[item]) {
-    zwischenprodukte[item] = { menge: 0, bestandteile: daten.itemsRequired };
-  }
-  zwischenprodukte[item].menge += menge;
-
-  for (const [subItem, subMenge] of daten.itemsRequired) {
-    const gesamtMenge = subMenge * menge;
-
-    if (rezepte[subItem]) {
-      berechneMaterialienUndProzesse(subItem, gesamtMenge, rohstoffe, zwischenprodukte);
-    } else {
-      if (!rohstoffe[subItem]) {
-        rohstoffe[subItem] = { menge: 0, verwendetIn: {} };
+  while(q.length){
+    const cur=q.shift();
+    const outs=reverseEdges[cur];
+    if(!outs) continue;
+    for(const prod of outs){
+      if(!visited.has(prod)){
+        visited.add(prod);
+        q.push(prod);
+        res.add(prod);
       }
-      rohstoffe[subItem].menge += gesamtMenge;
-      const inProdukt = anzeigeNamen[item] || item;
-      rohstoffe[subItem].verwendetIn[inProdukt] = (rohstoffe[subItem].verwendetIn[inProdukt] || 0) + gesamtMenge;
+    }
+  }
+
+  const filtered=new Set();
+  for(const k of allDropdownCandidates){
+    if(k!==startKey && res.has(k)) filtered.add(k);
+  }
+  return filtered;
+}
+
+function gvizJSONP(sheetName, timeoutMs=15000){
+  return new Promise((resolve,reject)=>{
+    const cb="gvizCb_"+Math.random().toString(36).slice(2);
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json,responseHandler:${cb}&headers=1&sheet=${encodeURIComponent(sheetName)}`;
+    const script=document.createElement("script");
+
+    let to=setTimeout(()=>{
+      cleanup();
+      reject(new Error("Timeout "+sheetName));
+    },timeoutMs);
+
+    function cleanup(){
+      clearTimeout(to);
+      try{ delete window[cb]; }catch(_){}
+      if(script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cb]=p=>{
+      cleanup();
+      try{
+        const cols=p.table.cols.map(c=>(c.label||c.id||"").trim());
+        const rows=p.table.rows.map(r=>{
+          const o={};
+          (r.c||[]).forEach((cell,i)=>{
+            o[cols[i]||("c"+i)] = cell ? cell.v : "";
+          });
+          return o;
+        });
+        resolve(rows);
+      }catch(e){
+        reject(e);
+      }
+    };
+
+    script.src=url;
+    script.onerror=()=>{
+      cleanup();
+      reject(new Error("GViz error "+sheetName));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+/* ===== Mapping-Helfer ===== */
+function buildInverseTranslateForBase(){
+  const map=new Map(); // display(lower) -> internal
+  for(const key of baseItemKeys){
+    const disp=translateMap[key];
+    if(disp) map.set(String(disp).toLowerCase(), key);
+  }
+  return map;
+}
+
+// einfache Alias-Liste für häufige Synonyme in prices
+const PRICE_ALIASES = new Map([
+  ["plastic","kunststoff"],
+  ["rubber","gummi"],
+  ["cotton","baumwolle"]
+]);
+
+function mapAnyKeyToInternal(raw, invMap){
+  const n = normKey(raw);
+  if(!n) return "";
+
+  // 1) bereits interner Key?
+  if(baseItemKeys.has(n) || rezepte[n]) return n;
+
+  // 2) display → internal
+  const viaDisplay = invMap.get(n.toLowerCase());
+  if(viaDisplay) return viaDisplay;
+
+  // 3) bekannte Aliase
+  const alias = PRICE_ALIASES.get(n);
+  if(alias) return alias;
+
+  // fallback
+  return n;
+}
+
+/* ===== Robuster Preis-Scan =====
+   Sliding Window über jede Zeile: (spalte_i, spalte_i+1)
+   Nur Preise >=1 werden akzeptiert
+*/
+function scanPriceRowForPairs(row, invMap){
+  const keys = Object.keys(row);
+  for(let i=0; i<keys.length-1; i++){
+    const keyItem  = keys[i];
+    const keyPrice = keys[i+1];
+
+    const rawItem  = row[keyItem];
+    const rawPrice = row[keyPrice];
+    if(rawItem===undefined || rawItem==="" ||
+       rawPrice===undefined || rawPrice==="") continue;
+
+    const internal = mapAnyKeyToInternal(rawItem, invMap);
+    const val = parseEuroNumber(rawPrice);
+
+    if(!internal || !isFinite(val) || val < 1) continue;
+    if(!baseItemKeys.has(internal)) continue;
+
+    // letzter gültiger Preis gewinnt
+    rohstoffPreise[internal] = Math.round(val);
+  }
+}
+
+/* ========= Daten laden ========= */
+async function ladeDaten(){
+  try{
+    hintBox.textContent =
+      "💡 Hinweis!\n" +
+      "Die Werte sind berechnet und nicht garantiert!\n" +
+      "Verwendung auf eigene Gefahr.\n" +
+      "🔄 Lade Daten ...";
+
+    const [recipesRows,itemsRows,transRows,pricesRows] = await Promise.all([
+      gvizJSONP(TAB_RECIPES),
+      gvizJSONP(TAB_ITEMS),
+      gvizJSONP(TAB_TRANSL).catch(()=>[]),
+      gvizJSONP(TAB_PRICES).catch(()=>[])
+    ]);
+
+    /* translate */
+    for(const r of transRows){
+      const ks=Object.keys(r);
+      const internal=normKey(r.internal||r.key||r.item||r[ks[0]]);
+      const display =String(r.display||r.name||r[ks[1]]||"").trim();
+      if(internal && display){
+        translateMap[internal]=display;
+      }
+    }
+
+    /* recipes */
+    const passed = new Set();
+    for(const r of recipesRows){
+      const k=normKey(r.key);
+      if(!k) continue;
+
+      baseNames[k]=String(r.name??"").trim()||k;
+
+      rezepte[k]={
+        wert:Number(r.wert??0)||0,
+        picture:String(r.picture??"").trim(),
+        itemsRequired:[]
+      };
+
+      const sel=Number(r.selectable);
+      if(allowedBuckets.has(sel)){
+        passed.add(k);
+      }
+    }
+
+    /* recipe_items + Base-Keys + Reverse-Graph */
+    const byProd={};
+    for(const r of itemsRows){
+      const p=normKey(r.product);
+      const i=normKey(r.item);
+      const q=Number(r.qty??0)||0;
+      if(!p||!i||!q) continue;
+
+      (byProd[p]??=[]).push([i,q]);
+
+      // Graph nur für craftbare Unterkomponenten
+      if(rezepte[i] && rezepte[p]){
+        addReverseEdge(i,p);
+      }
+    }
+
+    for(const k of Object.keys(rezepte)){
+      const arr = byProd[k]||[];
+      rezepte[k].itemsRequired = arr;
+
+      // Alles was benötigt wird, aber selbst kein Rezept hat -> Basisrohstoff
+      for(const [dep] of arr){
+        if(!rezepte[dep]){
+          baseItemKeys.add(dep);
+        }
+      }
+    }
+
+    /* Preise */
+    const invMap=buildInverseTranslateForBase();
+    for(const row of pricesRows){
+      scanPriceRowForPairs(row, invMap);
+    }
+
+    /* Dropdown-Kandidaten (sortiert nach Nummer falls vorhanden) */
+    allDropdownCandidates = Array.from(passed).sort((a,b)=>{
+      const na = Number(a.replace(/\D+/g,""))||0;
+      const nb = Number(b.replace(/\D+/g,""))||0;
+      return na-nb || a.localeCompare(b);
+    });
+
+    fillDropdown(startSelect, allDropdownCandidates);
+    fillDropdown(endSelect, allDropdownCandidates);
+    startSelect.disabled=false;
+    endSelect.disabled=false;
+
+    hintBox.textContent =
+      "💡 Hinweis!\n" +
+      "Die Werte sind berechnet und nicht garantiert!\n" +
+      "Verwendung auf eigene Gefahr.\n" +
+      "✅ Daten geladen.";
+  }catch(e){
+    console.error(e);
+    hintBox.classList.add("error-box");
+    hintBox.textContent="❌ "+e.message;
+  }
+}
+
+/* ========= Pfad / Prozess / Anzeige ========= */
+
+/* sammelt nur echte Rohstoffe (Zeug ohne eigenes Rezept) rekursiv */
+function sammleRohstoffe(item,m,bag){
+  const r=rezepte[item];
+  if(!r) return;
+
+  for(const [dep,q] of (r.itemsRequired||[])){
+    const tot=q*m;
+    if(rezepte[dep]){
+      // Zwischenprodukt, weiter aufdröseln
+      sammleRohstoffe(dep, tot, bag);
+    } else {
+      // Basisrohstoff
+      if(!bag[dep]) {
+        bag[dep]={menge:0,verwendetIn:{}};
+      }
+      bag[dep].menge+=tot;
+
+      const zielName = displayName(item);
+      bag[dep].verwendetIn[zielName] =
+        (bag[dep].verwendetIn[zielName]||0)+tot;
     }
   }
 }
 
-function zeigeErgebnis(itemKey) {
-  const rohstoffe = {}, zwischenprodukte = {};
-  let gesamtDauer = 0;
-  const daten = rezepte[itemKey];
-  const menge = 1;
+/* baut Herstellprozess + Produktionsreihenfolge (Toposort über Zwischenprodukte) */
+function baueHerstellprozess(target){
+  const qty = {};
+  const edges = {};
+  const nodes = new Set();
 
-  berechneMaterialienUndProzesse(itemKey, menge, rohstoffe, zwischenprodukte);
-
-  // Dauer berechnen
-  function berechneDauer(item, menge) {
-    const data = rezepte[item];
-    if (data?.dauer) gesamtDauer += data.dauer * menge;
-
-    for (const [sub, m] of data?.itemsRequired || []) {
-      if (rezepte[sub]) berechneDauer(sub, m * menge);
-    }
+  function addEdge(d,t){
+    (edges[d]??=new Set()).add(t);
   }
-  berechneDauer(itemKey, menge);
 
-  // Rohstoffliste
-  let rohstoffAusgabe = "📦 Gesamtliste Rohstoffe:\n";
-  let gesamtKosten = 0;
-  for (const key in rohstoffe) {
-    const eintrag = rohstoffe[key];
-    const name = anzeigeNamen[key] || key;
-    const ort = fundorte[key] ? ` (Fundort: ${fundorte[key]})` : "";
-    const preis = rohstoffPreise[key] || 0;
-    const kosten = preis * eintrag.menge;
-    gesamtKosten += kosten;
-    rohstoffAusgabe += `- ${eintrag.menge}x ${name}${ort} = ${kosten} €\n`;
-    for (const verb in eintrag.verwendetIn) {
-      rohstoffAusgabe += `    ↳ benutzt in: ${verb} (${eintrag.verwendetIn[verb]})\n`;
+  function collect(it,m){
+    const r=rezepte[it];
+    if(!r) return;
+    nodes.add(it);
+
+    for(const[dep,x] of (r.itemsRequired||[])){
+      const need=x*m;
+      if(rezepte[dep]){
+        addEdge(dep,it);
+        nodes.add(dep);
+        qty[dep]=(qty[dep]||0)+need;
+        collect(dep,need);
+      }
     }
   }
 
-  // Herstellprozesse
-  let prozessAusgabe = "\n🔧 Herstellprozesse:\n";
-  const anzeigeSortiert = Object.entries(zwischenprodukte)
-    .filter(([k]) => k !== itemKey)
-    .sort((a, b) => b[1].menge - a[1].menge);
+  collect(target,1);
 
-  for (const [prod, details] of anzeigeSortiert) {
-    const name = anzeigeNamen[prod] || prod;
-    prozessAusgabe += `- ${details.menge}x ${name}\n`;
-    for (const [roh, m] of details.bestandteile) {
-      const rohName = anzeigeNamen[roh] || roh;
-      prozessAusgabe += `    ⤷ ${m * details.menge}x ${rohName}\n`;
+  // Topologische Sortierung
+  const indeg={};
+  for(const n of nodes){
+    indeg[n]=0;
+  }
+  for(const d in edges){
+    for(const t of edges[d]){
+      if(nodes.has(t)){
+        indeg[t]=(indeg[t]||0)+1;
+      }
     }
   }
 
-  const hauptProdukt = anzeigeNamen[itemKey] || itemKey;
-  prozessAusgabe += `\n- ${menge}x ${hauptProdukt}\n`;
-  for (const [roh, m] of daten.itemsRequired) {
-    const name = anzeigeNamen[roh] || roh;
-    prozessAusgabe += `    ⤷ ${m * menge}x ${name}\n`;
+  const q=[];
+  for(const n of nodes){
+    if((indeg[n]||0)===0) q.push(n);
   }
 
-  const gesamtWert = daten.wert || 0;
-  const gewinn = gesamtWert - gesamtKosten;
-  const gesamtdauer2 = (gesamtDauer)
-  const dauerInMinuten = (gesamtdauer2 / 60).toFixed(1);
-  const dauerInStunden = (gesamtdauer2 / 3600).toFixed(1);
-  const arbeitszeitkosten = (dauerInStunden * 300000);
-  const gesamtkosten2 = (gesamtKosten + arbeitszeitkosten);
-  const gesamtkosten3 = (gesamtkosten2 * 1.5);
-  const gesamtkosten3tAufgerundet = Math.ceil(gesamtkosten3 / 10000) * 10000;
-  
-  document.getElementById("ausgabe").textContent =
-    rohstoffAusgabe +
-    prozessAusgabe +
-    `\n💰 Materialkosten: ${gesamtKosten} €` + //; 
-    // `\n💰 Gesamtwert: ${gesamtWert} €` +
-   // `\n📈 Gewinn: ${gewinn} €` +
-    `\n⏱️ Herstellungsdauer Werkbank (gesamt):` +
-   // `\n⏱️ Herstellungsdauer Werkbank + Transportzeit:` +
-    `\n   ${gesamtdauer2} Sekunden = ${dauerInMinuten} Minuten = ${dauerInStunden} Stunden`;
-   // `\n📈 Arbeitszeitkosten : ${arbeitszeitkosten} €` +
-   // `\n💰 Gesamtkosten (Material + Arbeitszeit + Gewinn): ${gesamtkosten3tAufgerundet} €`;
-  
-  
+  const topo=[];
+  while(q.length){
+    const n=q.shift();
+    topo.push(n);
+    if(edges[n]){
+      for(const t of edges[n]){
+        indeg[t]--;
+        if(indeg[t]===0) q.push(t);
+      }
+    }
+  }
+
+  if(!topo.includes(target)) topo.push(target);
+
+  let txt="🔧 Herstellprozesse (Abarbeitungsreihenfolge):\n";
+  for(const it of topo){
+    const amount = (it===target)?1:(qty[it]||0);
+    if(amount<=0 && it!==target) continue;
+
+    txt+=`- ${amount}x ${displayName(it)}\n`;
+    const r=rezepte[it];
+    if(!r) continue;
+    for(const[dep,m] of (r.itemsRequired||[])){
+      txt+=`    ⤷ ${m*amount}x ${displayName(dep)}\n`;
+    }
+  }
+  return txt;
 }
 
+function updateAnzeige(){
+  const start = normKey(startSelect.value||"");
+  const reachableSet = Array.from(reachableFrom(start));
+  fillDropdown(endSelect, reachableSet.length ? reachableSet : allDropdownCandidates);
 
-select.addEventListener("change", () => {
-  zeigeErgebnis(select.value);
+  const ziel = normKey(endSelect.value||"");
+  if(!ziel){
+    ausgabe.textContent="Bitte Zielprodukt auswählen.";
+    bilderContainer.innerHTML="";
+    return;
+  }
+
+  // Rohstoffe + Kosten
+  const bag={};
+  sammleRohstoffe(ziel,1,bag);
+
+  let roh="📦 Rohstoffliste:\n";
+  let sum=0;
+  for(const k in bag){
+    const e=bag[k];
+    const p=rohstoffPreise[k]||0;
+    const c=Math.round(p*e.menge);
+
+    roh+=`- ${e.menge}x ${displayName(k)} ${p.toLocaleString('de-DE')} €/St = ${c.toLocaleString('de-DE')} €\n`;
+
+    for(const v in e.verwendetIn){
+      roh+=`    ↳ verwendet in: ${v} (${e.verwendetIn[v]})\n`;
+    }
+    sum+=c;
+  }
+
+  const proc = baueHerstellprozess(ziel);
+
+  ausgabe.textContent =
+    `🔄 Pfad: ${displayName(ziel)}\n\n` +
+    roh +
+    `\n💰 Gesamtkosten: ${sum.toLocaleString('de-DE')} €\n\n` +
+    proc;
+
+  // Bilder rendern (Semikolon-separiert)
+  bilderContainer.innerHTML="";
+  const r=rezepte[ziel];
+  if(r && r.picture){
+    const urls=r.picture
+      .split(";")
+      .map(s=>s.trim())
+      .filter(s=>/^https?:\/\//i.test(s));
+
+    for(const url of urls){
+      const img=document.createElement("img");
+      img.src=url;
+      img.alt=displayName(ziel);
+      bilderContainer.appendChild(img);
+    }
+  }
+}
+
+/* ========= Events & Init ========= */
+startSelect.addEventListener("change", ()=>{
+  const s=normKey(startSelect.value||"");
+  const reach=Array.from(reachableFrom(s));
+  fillDropdown(endSelect, reach.length ? reach : allDropdownCandidates);
+
+  ausgabe.textContent="Bitte Zielprodukt auswählen.";
+  bilderContainer.innerHTML="";
 });
 
+endSelect.addEventListener("change", updateAnzeige);
 
-  </script>
+/* Start: Daten ziehen */
+ladeDaten();
+</script>
 </body>
 </html>
