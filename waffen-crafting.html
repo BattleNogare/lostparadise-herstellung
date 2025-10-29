@@ -42,7 +42,6 @@
       object-fit:contain;
     }
 
-    /* Link oben wie in alter Waffen-Seite */
     .link-button {
       display:inline-block;
       padding:.6rem 1rem;
@@ -82,7 +81,6 @@
       outline-offset:2px;
     }
 
-    /* Hinweis-Box gelb links, wie bei Waffen-Seite */
     .hinweis-box{
       background:var(--panel-2);
       color:var(--accent);
@@ -166,12 +164,8 @@
     <a href="index.html" class="link-button">Zum Fahrzeug-Crafting</a>
   </p>
 
-  <!-- Steuer-Elemente -->
+  <!-- Nur EIN Dropdown für Zielprodukt -->
   <div class="controls">
-    <select id="startSelect" disabled>
-      <option value="">-- Optional: Startprodukt --</option>
-    </select>
-
     <select id="endSelect" disabled>
       <option value="">-- Zielprodukt auswählen --</option>
     </select>
@@ -201,13 +195,10 @@ const TAB_ITEMS   = "recipe_items";
 const TAB_TRANSL  = "translate";
 const TAB_PRICES  = "prices";
 
-/* HIER WICHTIG:
-   Waffen-Crafting == Bucket 3
-*/
+/* Waffen-Crafting == Bucket 3 */
 const DEFAULT_BUCKETS = [3];
 
 /* ========= State ========= */
-const startSelect = document.getElementById("startSelect");
 const endSelect   = document.getElementById("endSelect");
 const ausgabe     = document.getElementById("ausgabe");
 const hintBox     = document.getElementById("hintBox");
@@ -218,7 +209,6 @@ const baseNames = {};
 const translateMap = {};
 const displayNameCache = new Map();
 
-const reverseEdges = {};
 const baseItemKeys = new Set();
 const rohstoffPreise = {};
 
@@ -229,10 +219,10 @@ let allDropdownCandidates = [];
 function normKey(v){
   return String(v ?? "")
     .normalize("NFKC")
-    .replace(/[\u00A0\u200B\t\n\r]+/g,"") // unsichtbare
-    .replace(/\s+/g," ")                 // doppelte Spaces
+    .replace(/[\u00A0\u200B\t\n\r]+/g,"")
+    .replace(/\s+/g," ")
     .trim()
-    .replace(/[;:]+$/,"")                // störende Endzeichen
+    .replace(/[;:]+$/,"")
     .toLowerCase();
 }
 
@@ -249,12 +239,10 @@ function parseEuroNumber(v){
   const decIsComma = c > d;
 
   if(decIsComma){
-    // "1.234,56" -> "1234.56"
     s=s.replace(/\./g,'');
     const i=s.lastIndexOf(',');
     s=s.slice(0,i).replace(/,/g,'') + '.' + s.slice(i+1).replace(/,/g,'');
   } else {
-    // "1,234.56" -> "1234.56"
     s=s.replace(/,/g,'');
   }
   const n=Number(s);
@@ -269,20 +257,13 @@ function displayName(k){
   return n;
 }
 
-function addReverseEdge(dep,prod){
-  if(!reverseEdges[dep]) reverseEdges[dep]=new Set();
-  reverseEdges[dep].add(prod);
-}
-
 function fillDropdown(sel,keys){
   const prev = sel.value;
   sel.innerHTML = "";
 
   const first = document.createElement("option");
   first.value = "";
-  first.textContent = (sel===startSelect)
-    ? "-- Optional: Startprodukt --"
-    : "-- Zielprodukt auswählen --";
+  first.textContent = "-- Zielprodukt auswählen --";
   sel.appendChild(first);
 
   for(const k of keys){
@@ -293,33 +274,6 @@ function fillDropdown(sel,keys){
   }
 
   if(prev && keys.includes(prev)) sel.value=prev;
-}
-
-function reachableFrom(startKey){
-  if(!startKey) return new Set(allDropdownCandidates);
-
-  const visited = new Set([startKey]);
-  const q = [startKey];
-  const res = new Set();
-
-  while(q.length){
-    const cur=q.shift();
-    const outs=reverseEdges[cur];
-    if(!outs) continue;
-    for(const prod of outs){
-      if(!visited.has(prod)){
-        visited.add(prod);
-        q.push(prod);
-        res.add(prod);
-      }
-    }
-  }
-
-  const filtered=new Set();
-  for(const k of allDropdownCandidates){
-    if(k!==startKey && res.has(k)) filtered.add(k);
-  }
-  return filtered;
 }
 
 function gvizJSONP(sheetName, timeoutMs=15000){
@@ -375,7 +329,6 @@ function buildInverseTranslateForBase(){
   return map;
 }
 
-// einfache Alias-Liste für häufige Synonyme in prices
 const PRICE_ALIASES = new Map([
   ["plastic","kunststoff"],
   ["rubber","gummi"],
@@ -397,14 +350,10 @@ function mapAnyKeyToInternal(raw, invMap){
   const alias = PRICE_ALIASES.get(n);
   if(alias) return alias;
 
-  // fallback
   return n;
 }
 
-/* ===== Robuster Preis-Scan =====
-   Sliding Window über jede Zeile: (spalte_i, spalte_i+1)
-   Nur Preise >=1 werden akzeptiert
-*/
+/* Preise erkennen */
 function scanPriceRowForPairs(row, invMap){
   const keys = Object.keys(row);
   for(let i=0; i<keys.length-1; i++){
@@ -422,7 +371,6 @@ function scanPriceRowForPairs(row, invMap){
     if(!internal || !isFinite(val) || val < 1) continue;
     if(!baseItemKeys.has(internal)) continue;
 
-    // letzter gültiger Preis gewinnt
     rohstoffPreise[internal] = Math.round(val);
   }
 }
@@ -468,32 +416,24 @@ async function ladeDaten(){
       };
 
       const sel=Number(r.selectable);
-      if(allowedBuckets.has(sel)){
+      if(new Set(DEFAULT_BUCKETS).has(sel)){
         passed.add(k);
       }
     }
 
-    /* recipe_items + Base-Keys + Reverse-Graph */
+    /* recipe_items + Basisrohstoffe markieren */
     const byProd={};
     for(const r of itemsRows){
       const p=normKey(r.product);
       const i=normKey(r.item);
       const q=Number(r.qty??0)||0;
       if(!p||!i||!q) continue;
-
       (byProd[p]??=[]).push([i,q]);
-
-      // Graph nur für craftbare Unterkomponenten
-      if(rezepte[i] && rezepte[p]){
-        addReverseEdge(i,p);
-      }
     }
 
     for(const k of Object.keys(rezepte)){
       const arr = byProd[k]||[];
       rezepte[k].itemsRequired = arr;
-
-      // Alles was benötigt wird, aber selbst kein Rezept hat -> Basisrohstoff
       for(const [dep] of arr){
         if(!rezepte[dep]){
           baseItemKeys.add(dep);
@@ -501,22 +441,20 @@ async function ladeDaten(){
       }
     }
 
-    /* Preise */
+    /* Preise auflösen */
     const invMap=buildInverseTranslateForBase();
     for(const row of pricesRows){
       scanPriceRowForPairs(row, invMap);
     }
 
-    /* Dropdown-Kandidaten (sortiert nach Nummer falls vorhanden) */
+    /* Dropdown befüllen */
     allDropdownCandidates = Array.from(passed).sort((a,b)=>{
       const na = Number(a.replace(/\D+/g,""))||0;
       const nb = Number(b.replace(/\D+/g,""))||0;
       return na-nb || a.localeCompare(b);
     });
 
-    fillDropdown(startSelect, allDropdownCandidates);
     fillDropdown(endSelect, allDropdownCandidates);
-    startSelect.disabled=false;
     endSelect.disabled=false;
 
     hintBox.textContent =
@@ -531,9 +469,9 @@ async function ladeDaten(){
   }
 }
 
-/* ========= Pfad / Prozess / Anzeige ========= */
+/* ========= Berechnung / Anzeige ========= */
 
-/* sammelt nur echte Rohstoffe (Zeug ohne eigenes Rezept) rekursiv */
+/* Rohstoffübersicht rekursiv */
 function sammleRohstoffe(item,m,bag){
   const r=rezepte[item];
   if(!r) return;
@@ -541,7 +479,7 @@ function sammleRohstoffe(item,m,bag){
   for(const [dep,q] of (r.itemsRequired||[])){
     const tot=q*m;
     if(rezepte[dep]){
-      // Zwischenprodukt, weiter aufdröseln
+      // Zwischenprodukt weiter auflösen
       sammleRohstoffe(dep, tot, bag);
     } else {
       // Basisrohstoff
@@ -549,7 +487,6 @@ function sammleRohstoffe(item,m,bag){
         bag[dep]={menge:0,verwendetIn:{}};
       }
       bag[dep].menge+=tot;
-
       const zielName = displayName(item);
       bag[dep].verwendetIn[zielName] =
         (bag[dep].verwendetIn[zielName]||0)+tot;
@@ -557,7 +494,7 @@ function sammleRohstoffe(item,m,bag){
   }
 }
 
-/* baut Herstellprozess + Produktionsreihenfolge (Toposort über Zwischenprodukte) */
+/* Herstellprozess / Reihenfolge */
 function baueHerstellprozess(target){
   const qty = {};
   const edges = {};
@@ -585,7 +522,7 @@ function baueHerstellprozess(target){
 
   collect(target,1);
 
-  // Topologische Sortierung
+  // Toposort
   const indeg={};
   for(const n of nodes){
     indeg[n]=0;
@@ -633,10 +570,6 @@ function baueHerstellprozess(target){
 }
 
 function updateAnzeige(){
-  const start = normKey(startSelect.value||"");
-  const reachableSet = Array.from(reachableFrom(start));
-  fillDropdown(endSelect, reachableSet.length ? reachableSet : allDropdownCandidates);
-
   const ziel = normKey(endSelect.value||"");
   if(!ziel){
     ausgabe.textContent="Bitte Zielprodukt auswählen.";
@@ -671,7 +604,7 @@ function updateAnzeige(){
     `\n💰 Gesamtkosten: ${sum.toLocaleString('de-DE')} €\n\n` +
     proc;
 
-  // Bilder rendern (Semikolon-separiert)
+  // Bilder anzeigen
   bilderContainer.innerHTML="";
   const r=rezepte[ziel];
   if(r && r.picture){
@@ -690,18 +623,9 @@ function updateAnzeige(){
 }
 
 /* ========= Events & Init ========= */
-startSelect.addEventListener("change", ()=>{
-  const s=normKey(startSelect.value||"");
-  const reach=Array.from(reachableFrom(s));
-  fillDropdown(endSelect, reach.length ? reach : allDropdownCandidates);
-
-  ausgabe.textContent="Bitte Zielprodukt auswählen.";
-  bilderContainer.innerHTML="";
-});
-
 endSelect.addEventListener("change", updateAnzeige);
 
-/* Start: Daten ziehen */
+/* Startdaten laden */
 ladeDaten();
 </script>
 </body>
